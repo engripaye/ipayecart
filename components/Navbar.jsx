@@ -9,6 +9,7 @@ import { useUser, useClerk, UserButton } from "@clerk/nextjs";
 const Navbar = () => {
 
     const {user} = useUser();
+    const {openSignIn} = useClerk()
     const router = useRouter();
 
     const [search, setSearch] = useState('')
@@ -51,7 +52,7 @@ const Navbar = () => {
 
                         {
                             !user ? (
-                                <button className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
+                                <button onClick={openSignIn} className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
                                     Login
                                 </button>
 
@@ -69,9 +70,22 @@ const Navbar = () => {
 
                     {/* Mobile User Button  */}
                     <div className="sm:hidden">
-                        <button className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full">
-                            Login
-                        </button>
+                        {
+                            user ? (
+                                <div>
+                                    <UserButton>
+                                        <UserButton.MenuItems>
+                                            <UserButton.Action labelIcon={<PackageIcon size={16}/>} label="My Orders" onClick={() => router.push('/orders')} />
+                                        </UserButton.MenuItems>
+                                    </UserButton>
+                                </div>
+                            ) : (
+                                <button onClick={openSignIn} className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full">
+                                    Login
+                                </button>
+                            )
+                        }
+
                     </div>
                 </div>
             </div>
