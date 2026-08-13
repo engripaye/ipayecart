@@ -1,5 +1,5 @@
 'use client'
-import { Search, ShoppingCart } from "lucide-react";
+import {PackageIcon, Search, ShoppingCart} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -49,9 +49,21 @@ const Navbar = () => {
                             <button className="absolute -top-1 left-3 text-[8px] text-white bg-slate-600 size-3.5 rounded-full">{cartCount}</button>
                         </Link>
 
-                        <button className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
-                            Login
-                        </button>
+                        {
+                            !user ? (
+                                <button className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full">
+                                    Login
+                                </button>
+
+                            ) : (
+                                <UserButton>
+                                    <UserButton.MenuItems>
+                                        <UserButton.Action labelIcon={<PackageIcon size={16}/>} label="My Orders" onClick={() => router.push('/orders')} />
+                                    </UserButton.MenuItems>
+                                </UserButton>
+                            )
+                        }
+
 
                     </div>
 
