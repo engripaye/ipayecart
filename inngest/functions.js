@@ -30,14 +30,16 @@ export const syncUserUpdate = inngest.createFunction(
             },
 
             data: {
-                id: data.id,
                 email: data.email_address[0].email_address,
                 name: `${data.first_name} ${data.last_name}`,
                 image: data.image_url,
 
             }
-
-
         })
     }
+)
+
+// ingest function to delete user from database
+export const syncUserDeletion = inngest.createFunction(
+
 )
