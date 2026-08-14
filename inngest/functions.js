@@ -1,7 +1,7 @@
 import { inngest } from './client';
 import prisma from '@/lib/prisma';
-// ingest function to save user to a database
 
+// ingest function to save user to a database
 export const syncUserCreation = inngest.createFunction(
     {id: 'sync-user-create'},
     {event: 'clerk/user.created'},
