@@ -5,8 +5,6 @@ generator client {
 
 datasource db {
     provider  = "postgresql"
-    url       = env("DATABASE_URL")
-    directUrl = env("DIRECT_URL")
 }
 
 // Required for creating a User: id, name, email, image, cart (optional JSON string)
