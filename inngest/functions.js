@@ -10,14 +10,28 @@ export const syncUserCreation = inngest.createFunction(
         },
     },
     async ({ event }) => {
-        const { data } = event;
+        const data = event.data;
+
+        if (!data?.id) {
+            throw new Error("Clerk user data is missing");
+        }
+
+        const email = data.email_addresses?.[0]?.email_address;
+
+        if (!email) {
+            throw new Error(
+                `No email address found for Clerk user ${data.id}`
+            );
+        }
+
+        const name = `${data.first_name ?? ""} ${data.last_name ?? ""}`.trim();
 
         await prisma.user.create({
             data: {
                 id: data.id,
-                email: data.email_address[0].email_address,
-                name: `${data.first_name} ${data.last_name}`,
-                image: data.image_url,
+                email,
+                name,
+                image: data.image_url ?? null,
             },
         });
     }
