@@ -23,7 +23,7 @@ export const syncUserCreation = inngest.createFunction(
 
 // inngest function to update user data in database
 export const syncUserUpdation = inngest.createFunction(
-    {id: "sync-user-updatte"},
+    {id: "sync-user-update"},
     {event: 'clerk/user.updated'},
     async ({ event }) => {
         const {data} = event
@@ -38,30 +38,16 @@ export const syncUserUpdation = inngest.createFunction(
     }
 );
 
-// Delete Clerk users from the database
+// inngest function to delete user from database
 export const syncUserDeletion = inngest.createFunction(
     {
-        id: "sync-user-delete",
-        triggers: {
-            event: "clerk/user.deleted",
-        },
-    },
-    async ({ event }) => {
-        const data = event.data;
-
-        if (!data?.id) {
-            throw new Error("Clerk user ID is missing");
-        }
-
+        id: "sync-user-delete"},
+    {event: 'clerk/user.deleted'},
+    async({params}) => {
+        const {data} = event
         await prisma.user.delete({
-            where: {
-                id: data.id,
-            },
-        });
+            where: {id: data.id,}
+        })
 
-        return {
-            success: true,
-            userId: data.id,
-        };
     }
 );
