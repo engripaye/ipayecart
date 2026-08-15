@@ -85,12 +85,21 @@ export const syncUserDeletion = inngest.createFunction(
         },
     },
     async ({ event }) => {
-        const { data } = event;
+        const data = event.data;
+
+        if (!data?.id) {
+            throw new Error("Clerk user ID is missing");
+        }
 
         await prisma.user.delete({
             where: {
                 id: data.id,
             },
         });
+
+        return {
+            success: true,
+            userId: data.id,
+        };
     }
 );
