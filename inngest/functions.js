@@ -49,5 +49,7 @@ export const syncUserDeletion = inngest.createFunction(
             where: {id: data.id,}
         })
 
+
+
     }
 );
