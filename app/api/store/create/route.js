@@ -42,7 +42,7 @@ export async function POST(request){
     })
 
     if(isUsernameTaken){
-        return NextResponse.json({error: "username already taken"})
+        return NextResponse.json({error: "username already taken"}, {staus: 400})
     }
 }catch (error){
 
