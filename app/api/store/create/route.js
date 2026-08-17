@@ -40,6 +40,10 @@ export async function POST(request){
     const isUsernameTaken = await prisma.store.findfirst({
         where: { username: username.toLowerCase() }
     })
+
+    if(isUsernameTaken){
+        return NextResponse.json({error: "username already taken"})
+    }
 }catch (error){
 
 }
