@@ -25,7 +25,16 @@ export async function POST(request){
 
 
     // check if user has already registered a store
-    const store = await prisma.store.fin
+    const store = await prisma.store.findfirst({
+        where: { userId: userId }
+    })
+
+    // if a store is already registered then send status of store
+    if(store){
+        return NextResponse.json({
+            status: store.status
+        })
+    }
 }catch (error){
 
 }
