@@ -26,6 +26,7 @@ export async function POST(request){
     const address = formData.get("address")
     const image = formData.get("image")
 
+    // Validate required fieLd
     if(!name || !username || !description || !email || !contact || !address || !image) {
         return NextResponse.json({error: "missing store information"}, {status: 400})
     }
@@ -45,12 +46,19 @@ export async function POST(request){
 
     // check if username is already taken
     const isUsernameTaken = await prisma.store.findfirst({
-        where: { username: username.toLowerCase() }
+        where: { username: username.toLowerCase(),
+        },
     })
 
     if(isUsernameTaken){
         return NextResponse.json({error: "username already taken"}, {staus: 400})
     }
+
+    // store creation confirmation after images uploaded is effected
+    return NextResponse.json({
+        message: "Store Validation Successful!",
+    })
 }catch (error){
+    console.error()
 
 }
