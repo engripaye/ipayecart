@@ -1,4 +1,6 @@
 import { getAuth } from "@clerk/nextjs/server";
+import {NextResponse} from "next/server";
+import prisma from "@/lib/prisma";
 
 // create the stoRE
 export async function POST(request){
@@ -16,6 +18,14 @@ export async function POST(request){
     const contact = formData.get("contact")
     const address = formData.get("address")
     const image = formData.get("image")
+
+    if(!name || !username || !description || !email || !contact || !address || !image) {
+        return NextResponse.json({error: "missing store information"}, {status: 400})
+    }
+
+
+    // check if user has already registered a store
+    const store = await prisma.store.fin
 }catch (error){
 
 }
