@@ -26,6 +26,8 @@ export async function POST(request) {
         const address = formData.get("address")
         const image = formData.get("image")
 
+
+
         // Validate required fieLd
         if (!name || !username || !description || !email || !contact || !address || !image) {
             return NextResponse.json({error: "missing store information"}, {status: 400})
