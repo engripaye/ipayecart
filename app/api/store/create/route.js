@@ -2,7 +2,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import {NextResponse} from "next/server";
 import prisma from "@/lib/prisma";
 
-// create a storee
+// create a store
 export async function POST(request) {
 
     try {
