@@ -65,7 +65,7 @@ export async function POST(request) {
         console.error("Create store error", error);
 
         return NextResponse.json({
-                error: "Something went wrong"
+                error: "error, something went wrong"
             },
 
             {status: 500}
