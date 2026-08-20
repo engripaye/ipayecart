@@ -59,7 +59,7 @@ export async function POST(request) {
 
         // store creation confirmation after images uploaded is effected
         return NextResponse.json({
-            message: "Store Validation Successful!",
+            message: "Store Validation Successful",
         })
     } catch (error) {
         console.error("Create store error", error);
