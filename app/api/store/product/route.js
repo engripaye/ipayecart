@@ -1,6 +1,7 @@
 import {getAuth} from "@clerk/nextjs/server";
 import authSeller from "@/middleware/authSeller";
 import imageKit from "@/configs/imageKit";
+import {NextResponse} from "next/server";
 
 // Add a new product
  export async function POST(request) {
@@ -58,7 +59,10 @@ import imageKit from "@/configs/imageKit";
                 storeId
             }
         })
+        return NextResponse.json({ message: "Product added successfully" });
     }catch (error) {
 
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
     }
  }
