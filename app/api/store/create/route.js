@@ -1,6 +1,7 @@
 import { getAuth } from "@clerk/nextjs/server";
 import {NextResponse} from "next/server";
 import prisma from "@/lib/prisma";
+import imageKit from "@/configs/imageKit";
 
 // create a store
 export async function POST(request) {
@@ -56,6 +57,16 @@ export async function POST(request) {
         if (isUsernameTaken) {
             return NextResponse.json({error: "username already taken"}, {staus: 400})
         }
+
+        // image upload to imagekit
+        const buffer = Buffer.from(await image.arrayBuffer());
+        const response = await imageKit.upload({
+            file: buffer,
+            fileName: image.name,
+            folder: "logos",
+        });
+
+        const optimizedImage =
 
         // store creation confirmation after images uploaded is effected
         return NextResponse.json({
