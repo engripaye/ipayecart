@@ -5,6 +5,7 @@ import {getAuth} from "@clerk/nextjs/server";
     try {
         const { userId } = getAuth(request);
 
+
     }catch (error) {
 
     }
