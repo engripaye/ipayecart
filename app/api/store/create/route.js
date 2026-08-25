@@ -66,7 +66,29 @@ export async function POST(request) {
             folder: "logos",
         });
 
-        const optimizedImage =
+        const optimizedImage = imageKit.url({
+            path: response.filePath,
+            transformation: [
+                {quality: "auto"},
+                {format: "webp"},
+                {height: "512"},
+
+                ]
+        })
+
+        const newStore = await prisma.store.create({
+            data: {
+                userId,
+                name,
+                username: username.toLowerCase(),
+                email,
+                contact,
+                address,
+                logo: optimizedImage
+            }
+        })
+
+        // link store to user
 
         // store creation confirmation after images uploaded is effected
         return NextResponse.json({
