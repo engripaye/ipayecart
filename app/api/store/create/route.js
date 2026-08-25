@@ -92,11 +92,11 @@ export async function POST(request) {
         await prisma.user.update({
             where: {id: userId},
             data: {store: {connect: {id: newStore.id}}}
-        }
+        })
 
         // store creation confirmation after images uploaded is effected
         return NextResponse.json({
-            message: "Store Validation Successful",
+            message: "applied, waiting for approval",
         })
     } catch (error) {
         console.error("Create store error", error);
