@@ -34,10 +34,30 @@ import imageKit from "@/configs/imageKit";
                 folder: "products",
 
             })
-            const url = imageKit.url({[
+            const url = imageKit.url({
                 path: response.filePath,
+                transformation: [
+                    { quality: 'auto' },
+                    { format: 'webp' },
+                    { width: '1024' }
 
-                    ]})
+                    ]
+
+                    })
+            return url
+
+        }))
+        await prisma.product.create({
+            data: {
+                name,
+                description,
+                mrp,
+                price,
+                category,
+                images: imagesUrl,
+                storeId
+            }
+        })
     }catch (error) {
 
     }
