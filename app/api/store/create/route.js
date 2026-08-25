@@ -107,3 +107,12 @@ export async function POST(request) {
 
     }
 }
+
+// check if user have already registered a store
+export async function GET(request) {
+    try {
+
+    }catch (error) {
+
+    }
+}
