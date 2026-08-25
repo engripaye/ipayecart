@@ -24,8 +24,10 @@ export async function GET(request) {
             return NextResponse.json({ error: "Store not found" }, { status: 400 });
         }
 
-        return NextResponse.json({ store }, { status: 200 });
+        return NextResponse.json({ store });
     }catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
 
     }
 }
