@@ -18,6 +18,8 @@ export async function GET(request) {
         return NextResponse.json({ isSeller, storeInfo})
 
     } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
 
     }
 }
