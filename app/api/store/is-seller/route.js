@@ -1,9 +1,8 @@
-// Auth Seller
 import {getAuth} from "@clerk/nextjs/server";
 import authSeller from "@/middleware/authSeller";
 import {NextResponse} from "next/server";
-import {error} from "next/dist/build/output/log";
 
+// Auth Seller
 export async function GET(request) {
     try {
         const { userId } = getAuth(request);
