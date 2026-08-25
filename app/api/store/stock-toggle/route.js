@@ -1,10 +1,8 @@
-
-
-// toggle stock of a product
 import {getAuth} from "@clerk/nextjs/server";
 import authSeller from "@/middleware/authSeller";
 import {NextResponse} from "next/server";
 
+// toggle stock of a product
 export async function POST(request) {
     try {
         const { userId } = getAuth(request);
