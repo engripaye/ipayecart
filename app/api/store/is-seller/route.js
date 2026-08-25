@@ -7,7 +7,7 @@ import {error} from "next/dist/build/output/log";
 export async function GET(request) {
     try {
         const { userId } = getAuth(request);
-        const isSeller = await authSeller(userId);\
+        const isSeller = await authSeller(userId);
 
         if(!isSeller) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
