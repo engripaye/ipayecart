@@ -89,6 +89,10 @@ export async function POST(request) {
         })
 
         // link store to user
+        await prisma.user.update({
+            where: {id: userId},
+            data: {store: {connect: {id: newStore.id}}}
+        }
 
         // store creation confirmation after images uploaded is effected
         return NextResponse.json({
