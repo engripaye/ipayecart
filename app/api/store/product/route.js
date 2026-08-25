@@ -27,7 +27,7 @@ import {NextResponse} from "next/server";
         }
 
         //uploading images to image kit
-        const imagesUrl = await Promise.all(images.map(async (image) => {)
+        const imagesUrl = await Promise.all(images.map(async (image) => {
             const buffer = Buffer.from(await image.arrayBuffer());
             const response = await imageKit.upload({
                 file: buffer,
