@@ -99,14 +99,11 @@ export async function POST(request) {
             message: "applied, waiting for approval",
         })
     } catch (error) {
-        console.error("Create store error", error);
+        console.error(error);
 
         return NextResponse.json({
-                error: "error, something went wrong"
-            },
-
-            {status: 500}
-        )
+                error: error.code || error.message
+            }, {status: 400})
 
     }
 }
