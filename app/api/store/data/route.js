@@ -1,9 +1,7 @@
-
+import {NextResponse} from "next/server";
+import prisma from "@/lib/prisma";
 
 // Get store info and products
-
-import {NextResponse} from "next/server";
-
 export async function GET(request) {
     try{
         // get username from query params
