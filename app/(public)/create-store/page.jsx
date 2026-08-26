@@ -50,7 +50,6 @@ export default function CreateStore() {
                         break;
                     case "pending":
                         setMessage("Your store has been has been pending, please wait for the admin to approve your store")
-                        setTimeout(() => router.push("/store"), 500)
                         break;
 
                     default:
