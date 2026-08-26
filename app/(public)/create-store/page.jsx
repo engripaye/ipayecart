@@ -52,6 +52,9 @@ export default function CreateStore() {
             formData.append("username", storeInfo.username)
             formData.append("email", storeInfo.email)
             formData.append("contact", storeInfo.contact)
+            formData.append("address", storeInfo.address)
+            formData.append("image", storeInfo.image)
+
 
         } catch (error){
 
