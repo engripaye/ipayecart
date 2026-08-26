@@ -6,6 +6,7 @@ import toast from "react-hot-toast"
 import Loading from "@/components/Loading"
 import {useAuth, useUser} from "@clerk/nextjs";
 import {useRouter} from "next/navigation";
+import axios from "axios";
 
 export default function CreateStore() {
 
