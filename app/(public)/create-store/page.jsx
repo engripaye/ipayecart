@@ -4,13 +4,14 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import toast from "react-hot-toast"
 import Loading from "@/components/Loading"
-import {useUser} from "@clerk/nextjs";
+import {useAuth, useUser} from "@clerk/nextjs";
 import {useRouter} from "next/navigation";
 
 export default function CreateStore() {
 
     const {user} = useUser()
-    comst {router} = useRouter()
+    const {router} = useRouter()
+    const {getToken} = useAuth()
     const [alreadySubmitted, setAlreadySubmitted] = useState(false)
     const [status, setStatus] = useState("")
     const [loading, setLoading] = useState(true)
