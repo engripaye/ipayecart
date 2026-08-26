@@ -81,6 +81,7 @@ export async function POST(request) {
                 userId,
                 name,
                 username: username.toLowerCase(),
+                description,
                 email,
                 contact,
                 address,
