@@ -36,7 +36,7 @@ export async function POST(request) {
 
 
         // check if user has already registered a store
-        const store = await prisma.store.findfirst({
+        const store = await prisma.store.findFirst({
             where: {userId: userId}
         })
 
@@ -48,7 +48,7 @@ export async function POST(request) {
         }
 
         // check if username is already taken
-        const isUsernameTaken = await prisma.store.findfirst({
+        const isUsernameTaken = await prisma.store.findFirst({
             where: {
                 username: username.toLowerCase(),
             },
@@ -114,7 +114,7 @@ export async function GET(request) {
         const {userId} = getAuth(request)
 
         // check if user has already registered a store
-        const store = await prisma.store.findfirst({
+        const store = await prisma.store.findFirst({
             where: {userId: userId}
         })
 
