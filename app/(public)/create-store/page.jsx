@@ -47,7 +47,12 @@ export default function CreateStore() {
         try{
             const token = await getToken()
             const formData = new FormData()
-            formData.append("name", "")
+            formData.append("name", storeInfo.name)
+            formData.append("description", storeInfo.description)
+            formData.append("username", storeInfo.username)
+            formData.append("email", storeInfo.email)
+            formData.append("contact", storeInfo.contact)
+
         } catch (error){
 
         }
