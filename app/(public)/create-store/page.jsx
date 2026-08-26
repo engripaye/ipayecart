@@ -40,7 +40,15 @@ export default function CreateStore() {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault()
-        // Logic to submit the store details
+        if(!user){
+            return toast('Please login to continue')
+        }
+
+        try{
+
+        } catch (error){
+
+        }
 
 
     }
