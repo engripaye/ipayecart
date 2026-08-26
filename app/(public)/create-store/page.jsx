@@ -56,12 +56,12 @@ export default function CreateStore() {
                     default:
                         break;
                 }
+            }else {
+                setAlreadySubmitted(false)
             }
         } catch(error){
-
+            toast.error(error?.response?.data?.error || error.message)
         }
-
-
         setLoading(false)
     }
 
