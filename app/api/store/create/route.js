@@ -58,10 +58,13 @@ export async function POST(request) {
             return NextResponse.json({error: "username already taken"}, {staus: 400})
         }
 
-        // image upload to imagekit
+        // image upload to ImageKit
         const buffer = Buffer.from(await image.arrayBuffer());
+
+        const base64File = `data:${image.type};base64,${buffer.toString("base64")}`;
+
         const response = await imageKit.files.upload({
-            file: buffer,
+            file: base64File,
             fileName: image.name,
             folder: "logos",
         });
