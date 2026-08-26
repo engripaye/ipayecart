@@ -45,7 +45,9 @@ export default function CreateStore() {
         }
 
         try{
-
+            const token = await getToken()
+            const formData = new FormData()
+            formData.append("name", "")
         } catch (error){
 
         }
