@@ -61,10 +61,8 @@ export async function POST(request) {
         // image upload to ImageKit
         const buffer = Buffer.from(await image.arrayBuffer());
 
-        const base64File = `data:${image.type};base64,${buffer.toString("base64")}`;
-
-        const response = await imageKit.files.upload({
-            file: base64File,
+        const response = await imageKit.upload({
+            file: buffer,
             fileName: image.name,
             folder: "logos",
         });
@@ -72,12 +70,11 @@ export async function POST(request) {
         const optimizedImage = imageKit.url({
             path: response.filePath,
             transformation: [
-                {quality: "auto"},
-                {format: "webp"},
-                {height: "512"},
-
-                ]
-        })
+                { quality: "auto" },
+                { format: "webp" },
+                { height: "512" },
+            ],
+        });
 
         const newStore = await prisma.store.create({
             data: {
