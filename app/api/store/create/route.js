@@ -1,64 +1,109 @@
-import { getAuth } from "@clerk/nextjs/server";
-import {NextResponse} from "next/server";
+import { currentUser, getAuth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import imageKit from "@/configs/imageKit";
 
 // create a store
 export async function POST(request) {
-
     try {
+        // Get authenticated Clerk user
+        const user = await currentUser();
 
-        // Get Authenticated user
-        const {userId} = getAuth(request)
-
-        // Make sure the use is logged in
-        if (!userId) {
-            return NextResponse.json({error: "Unauthorized"}, {status: 401});
+        // Make sure the user is logged in
+        if (!user) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
         }
 
-        // get the data from the form
-        const formData = await request.formData()
+        const userId = user.id;
 
-        const name = formData.get("name")
-        const username = formData.get("username")
-        const description = formData.get("description")
-        const email = formData.get("email")
-        const contact = formData.get("contact")
-        const address = formData.get("address")
-        const image = formData.get("image")
+        // Get user information from Clerk
+        const clerkEmail = user.emailAddresses[0]?.emailAddress;
+        const clerkName = user.firstName
+            ? `${user.firstName} ${user.lastName || ""}`.trim()
+            : "User";
+        const clerkImage = user.imageUrl;
 
-
-
-        // Validate required fieLd
-        if (!name || !username || !description || !email || !contact || !address || !image) {
-            return NextResponse.json({error: "missing store information"}, {status: 400})
+        // Make sure required Clerk information exists
+        if (!clerkEmail || !clerkImage) {
+            return NextResponse.json(
+                { error: "User email or image is missing" },
+                { status: 400 }
+            );
         }
 
+        // Make sure Clerk user exists in Prisma
+        await prisma.user.upsert({
+            where: {
+                id: userId,
+            },
+            update: {},
+            create: {
+                id: userId,
+                name: clerkName,
+                email: clerkEmail,
+                image: clerkImage,
+            },
+        });
 
-        // check if user has already registered a store
+        // Get the data from the form
+        const formData = await request.formData();
+
+        const name = formData.get("name");
+        const username = formData.get("username");
+        const description = formData.get("description");
+        const email = formData.get("email");
+        const contact = formData.get("contact");
+        const address = formData.get("address");
+        const image = formData.get("image");
+
+        // Validate required fields
+        if (
+            !name ||
+            !username ||
+            !description ||
+            !email ||
+            !contact ||
+            !address ||
+            !image
+        ) {
+            return NextResponse.json(
+                { error: "missing store information" },
+                { status: 400 }
+            );
+        }
+
+        // Check if user has already registered a store
         const store = await prisma.store.findFirst({
-            where: {userId: userId}
-        })
+            where: {
+                userId: userId,
+            },
+        });
 
-        // if a store is already registered then send status of store
+        // If a store is already registered, send status of store
         if (store) {
             return NextResponse.json({
-                status: store.status
-            })
+                status: store.status,
+            });
         }
 
-        // check if username is already taken
+        // Check if username is already taken
         const isUsernameTaken = await prisma.store.findFirst({
             where: {
                 username: username.toLowerCase(),
             },
-        })
+        });
 
         if (isUsernameTaken) {
-            return NextResponse.json({error: "username already taken"}, {staus: 400})
+            return NextResponse.json(
+                { error: "username already taken" },
+                { status: 400 }
+            );
         }
 
-        // image upload to ImageKit
+        // Image upload to ImageKit
         const buffer = Buffer.from(await image.arrayBuffer());
 
         const response = await imageKit.upload({
@@ -76,6 +121,7 @@ export async function POST(request) {
             ],
         });
 
+        // Create the store
         const newStore = await prisma.store.create({
             data: {
                 userId,
@@ -85,54 +131,78 @@ export async function POST(request) {
                 email,
                 contact,
                 address,
-                logo: optimizedImage
-            }
-        })
+                logo: optimizedImage,
+            },
+        });
 
-        // link store to user
+        // Link store to user
         await prisma.user.update({
-            where: {id: userId},
-            data: {store: {connect: {id: newStore.id}}}
-        })
+            where: {
+                id: userId,
+            },
+            data: {
+                store: {
+                    connect: {
+                        id: newStore.id,
+                    },
+                },
+            },
+        });
 
-        // store creation confirmation after images uploaded is effected
+        // Store creation confirmation
         return NextResponse.json({
             message: "applied, waiting for approval",
-        })
+        });
     } catch (error) {
         console.error(error);
 
-        return NextResponse.json({
-                error: error.code || error.message
-            }, {status: 400})
-
+        return NextResponse.json(
+            {
+                error: error.code || error.message,
+            },
+            { status: 400 }
+        );
     }
 }
 
-// check if user have already registered a store
+// Check if user has already registered a store
 export async function GET(request) {
     try {
-        const {userId} = getAuth(request)
+        const { userId } = getAuth(request);
 
-        // check if user has already registered a store
+        // Make sure the user is logged in
+        if (!userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        // Check if user has already registered a store
         const store = await prisma.store.findFirst({
-            where: {userId: userId}
-        })
+            where: {
+                userId: userId,
+            },
+        });
 
-        // if a store is already registered then send status of store
+        // If a store is already registered, send status of store
         if (store) {
             return NextResponse.json({
-                status: store.status
-            })
+                status: store.status,
+            });
         }
 
         return NextResponse.json({
-            status: "not registered"
-        })
-    }catch (error) {
+            status: "not registered",
+        });
+    } catch (error) {
         console.error(error);
-        return NextResponse.json({
-            error: error.code || error.message
-        }, {status: 400})
+
+        return NextResponse.json(
+            {
+                error: error.code || error.message,
+            },
+            { status: 400 }
+        );
     }
 }
