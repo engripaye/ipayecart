@@ -50,9 +50,13 @@ export async function DET(request){
 
         const stores = await prisma.store.findMany({
             where: {status: {in: ["pending", "rejected"]}},
-            include:
+            include: {user: true}
         })
+
+        return NextResponse.json({stores})
     }catch(error){
 
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, {status: 400})
     }
 }
