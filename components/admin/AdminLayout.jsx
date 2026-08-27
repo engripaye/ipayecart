@@ -6,6 +6,7 @@ import { ArrowRightIcon } from "lucide-react"
 import AdminNavbar from "./AdminNavbar"
 import AdminSidebar from "./AdminSidebar"
 import {useAuth, useUser} from "@clerk/nextjs";
+import axios from "axios";
 
 const AdminLayout = ({ children }) => {
 
