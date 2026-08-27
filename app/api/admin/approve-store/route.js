@@ -38,7 +38,7 @@ export async function POST(request){
 }
 
 // get all pending and rejected stores
-export async function DET(request){
+export async function GET(request){
 
     try {
         const {userId} = getAuth(request)
