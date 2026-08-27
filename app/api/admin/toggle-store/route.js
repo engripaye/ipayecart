@@ -15,7 +15,7 @@ export async function POST(request){
 
         const {storeId} = await request.json()
         if(!storeId){
-            return NextResponse.json({ error: "missing store id"}, {status: 401})
+            return NextResponse.json({ error: "missing store id"}, {status: 400})
 
         }
 
@@ -27,7 +27,12 @@ export async function POST(request){
         if(!store) {
             return NextResponse.json({ error: "store not found"}, {status: 400})
         }
-        }
+        await prisma.store.update({
+            where: {id: storeId},
+            data: {isActive: !store.isActive}
+        })
+
+        return NextResponse.json({ message: "Store updated successfully"})
     }catch(error){
 
         console.error(error);
