@@ -25,10 +25,14 @@ const AdminLayout = ({ children }) => {
     ) : isAdmin ? (
         <div className="flex flex-col h-screen">
             <AdminNavbar />
+
             <div className="flex flex-1 items-start h-full overflow-y-scroll no-scrollbar">
                 <AdminSidebar />
-                <div className="flex-1 h-full p-5 lg:pl-12 lg:pt-12 overflow-y-scroll">
-                    {children}
+
+                <div className="flex-1 h-full p-5 lg:p-12 overflow-y-scroll">
+                    <div className="w-full max-w-7xl mx-auto">
+                        {children}
+                    </div>
                 </div>
             </div>
         </div>
