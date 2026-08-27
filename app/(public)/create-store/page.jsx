@@ -42,14 +42,14 @@ export default function CreateStore() {
                 setAlreadySubmitted(true)
                 switch (data.status){
                     case "approved":
-                        setMessage("Your store has been has been approved, you can now add products to your store from dashboard")
+                        setMessage("Your store has been approved, you can now add products to your store from dashboard")
                         setTimeout(() => router.push("/store"), 500)
                         break;
                     case "rejected":
-                        setMessage("Your store has been has been rejected, contact the admin for more details")
+                        setMessage("Your store has been rejected, contact the admin for more details")
                         break;
                     case "pending":
-                        setMessage("Your store has been has been pending, please wait for the admin to approve your store")
+                        setMessage("Your store is on pending, please wait for the admin to approve your store")
                         break;
 
                     default:
