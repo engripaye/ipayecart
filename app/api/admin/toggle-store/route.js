@@ -13,12 +13,21 @@ export async function POST(request){
             return NextResponse.json({ error: "not authorized"}, {status: 401})
         }
 
-        const stores = await prisma.store.findMany({
-            where: {status: 'approved'},
-            include: {user: true}
+        const {storeId} = await request.json()
+        if(!storeId){
+            return NextResponse.json({ error: "missing store id"}, {status: 401})
+
+        }
+
+        // find the store
+        const store = await prisma.store.findUnique({
+            where: {id: storeId}
         })
 
-        return NextResponse.json({stores})
+        if(!store) {
+            return NextResponse.json({ error: "store not found"}, {status: 400})
+        }
+        }
     }catch(error){
 
         console.error(error);
