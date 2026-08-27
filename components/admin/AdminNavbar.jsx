@@ -1,6 +1,6 @@
 'use client'
 import Link from "next/link"
-import {useUser} from "@clerk/nextjs";
+import {useUser, UserButton} from "@clerk/nextjs";
 
 const AdminNavbar = () => {
 
@@ -16,6 +16,7 @@ const AdminNavbar = () => {
             </Link>
             <div className="flex items-center gap-3">
                 <p>Hi, {user?.firstName}</p>
+                <UserButton />
             </div>
         </div>
     )
