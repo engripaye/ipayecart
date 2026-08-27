@@ -49,7 +49,7 @@ export default function CreateStore() {
                         setMessage("Your store has been rejected, contact the admin for more details")
                         break;
                     case "pending":
-                        setMessage("Your store is on pending, please wait for the admin to approve your store")
+                        setMessage("Your store is awaiting approval, please wait for the admin to approve.")
                         break;
 
                     default:
