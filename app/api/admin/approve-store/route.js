@@ -9,7 +9,7 @@ export async function POST(request){
 
     try{
         const { userId } = getAuth(request)
-        const isAdmin = await authAdmin()
+        const isAdmin = await authAdmin(userId)
 
         if(!isAdmin){
             return NextResponse.json({ error: "not authorized"}, {status: 401})
@@ -35,4 +35,15 @@ export async function POST(request){
             return NextResponse.json({ error: error.code || error.message }, {status: 400})
         }
 
+}
+
+// get all pending and rejected stores
+export async function DET(request){
+
+    try{
+        const { userId } = getAuth(request)
+        const isAdmin = await authAdmin(userId)
+    }cxatch(error){
+
+    }
 }
