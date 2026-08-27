@@ -25,10 +25,14 @@ export async function POST(request){
         }else if(status === 'rejected'){
             await prisma.store.update({
                 where: { id: storeId},
-                data: { status: "rejected"})
+                data: { status: "rejected"}})
         }
 
-    }catch(error){
+        return NextResponse.json({ message: status + 'successfully'})
 
-    }
+    }catch(error){
+            console.error(error);
+            return NextResponse.json({ error: error.code || error.message }, {status: 400})
+        }
+
 }
