@@ -40,10 +40,19 @@ export async function POST(request){
 // get all pending and rejected stores
 export async function DET(request){
 
-    try{
-        const { userId } = getAuth(request)
+    try {
+        const {userId} = getAuth(request)
         const isAdmin = await authAdmin(userId)
-    }cxatch(error){
+
+        if(!isAdmin){
+            return NextResponse.json({ error: "not authorized"}, {status: 401})
+        }
+
+        const stores = await prisma.store.findMany({
+            where: {status: {in: ["pending", "rejected"]}},
+            include:
+        })
+    }catch(error){
 
     }
 }
