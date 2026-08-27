@@ -1,9 +1,8 @@
 import {getAuth} from "@clerk/nextjs/server";
 import authAdmin from "@/middleware/authAdmin";
 import {NextResponse} from "next/server";
+
 // auth Admin
-
-
 export async function GET(request){
     try{
         const { userId } = getAuth(request);
@@ -17,7 +16,8 @@ export async function GET(request){
 
 
         }catch (error){
-
+            console.log(error);
+            return NextResponse.json({ error: error.code || error.message}, {status: 400})
 
     }
 }
