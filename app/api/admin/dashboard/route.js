@@ -5,44 +5,51 @@ import {NextResponse} from "next/server";
 // Get dashboard data for admin
 
 export async function GET(request){
-    const { userId } = getAuth(request)
-    const isAdmin = await  authAdmin(userId)
 
-    if(isAdmin){
-        return NextResponse.json({ error: 'not authorized'}, { status: 401 });
-    }
+    try{
+        const { userId } = getAuth(request)
+        const isAdmin = await  authAdmin(userId)
 
-    // get total orders
-    const orders = await prisma.order.count()
-
-    // get total stores on app
-    const stores = await prisma.store.count()
-
-    // get all orders including total revenue
-    const allOrders = await prisma.order.findMany({
-        select: {
-            createdAt: true,
-            total: true,
-
+        if(isAdmin){
+            return NextResponse.json({ error: 'not authorized'}, { status: 401 });
         }
-    })
 
-    let totalRevenue = 0
-    allOrders.forEach(order => {
-        totalRevenue += order.total
-    })
+        // get total orders
+        const orders = await prisma.order.count()
 
-    const revenue = totalRevenue.toFixed(2)
+        // get total stores on app
+        const stores = await prisma.store.count()
 
-    // total products o app
+        // get all orders including total revenue
+        const allOrders = await prisma.order.findMany({
+            select: {
+                createdAt: true,
+                total: true,
 
-    const products = await prisma.product.count()
-    const dashboardData = {
-        orders,
-        stores,
-        products,
-        revenue,
-        allOrders
+            }
+        })
+
+        let totalRevenue = 0
+        allOrders.forEach(order => {
+            totalRevenue += order.total
+        })
+
+        const revenue = totalRevenue.toFixed(2)
+
+        // total products o app
+
+        const products = await prisma.product.count()
+        const dashboardData = {
+            orders,
+            stores,
+            products,
+            revenue,
+            allOrders
+        }
+
+        return NextResponse.json({dashboardData})
+    }catch (error){
+        console.error(error);
     }
 
 }
