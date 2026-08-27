@@ -2,8 +2,8 @@ import {getAuth} from "@clerk/nextjs/server";
 import authAdmin from "@/middleware/authAdmin";
 import {NextResponse} from "next/server";
 
-// get all approved stores
-export async function GET(request){
+// toggle store is active
+export async function POST(request){
 
     try {
         const {userId} = getAuth(request)
