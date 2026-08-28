@@ -5,6 +5,7 @@ import OrdersAreaChart from "@/components/OrdersAreaChart"
 import { CircleDollarSignIcon, ShoppingBasketIcon, StoreIcon, TagsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import {useAuth} from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 export default function AdminDashboard() {
 
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
         }catch(error){
             toast.error(error?.response?.error || error.message)
         }
+        setLoading(false)
     }
 
     useEffect(() => {
