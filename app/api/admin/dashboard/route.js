@@ -1,6 +1,7 @@
 import {getAuth} from "@clerk/nextjs/server";
 import authAdmin from "@/middleware/authAdmin";
 import {NextResponse} from "next/server";
+import prisma from '@/lib/prisma';
 
 // Get dashboard data for admin
 
