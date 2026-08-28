@@ -10,7 +10,7 @@ export async function GET(request){
         const { userId } = getAuth(request)
         const isAdmin = await  authAdmin(userId)
 
-        if(isAdmin){
+        if(!isAdmin){
             return NextResponse.json({ error: 'not authorized'}, { status: 401 });
         }
 
