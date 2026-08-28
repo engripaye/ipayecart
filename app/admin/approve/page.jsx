@@ -17,10 +17,15 @@ export default function AdminApprove() {
     const fetchStores = async () => {
         try{
             const token = await getToken()
-            const {data} = await axios.get('/api/admin/approve-store', )
+            const {data} = await axios.get('/api/admin/approve-store', {
+                headers: { Authorization: `Bearer ${token}`}
+            })
+            setStores(data.stores)
         }catch(error){
 
+            toast.error(error?.response?.data?.error || error.message)
         }
+        setLoading(false)
     }
 
     const handleApprove = async ({ storeId, status }) => {
@@ -30,8 +35,11 @@ export default function AdminApprove() {
     }
 
     useEffect(() => {
+        if(user){
             fetchStores()
-    }, [])
+        }
+
+    }, [user])
 
     return !loading ? (
         <div className="text-slate-500 mb-28">
