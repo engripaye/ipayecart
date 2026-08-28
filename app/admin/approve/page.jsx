@@ -4,16 +4,23 @@ import StoreInfo from "@/components/admin/StoreInfo"
 import Loading from "@/components/Loading"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import {useAuth, useUser} from "@clerk/nextjs";
 
 export default function AdminApprove() {
 
+    const {user} = useUser()
+    const {getToken} = useAuth()
     const [stores, setStores] = useState([])
     const [loading, setLoading] = useState(true)
 
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
-        setLoading(false)
+        try{
+            const token = await getToken()
+            const {data} = await axios.get('/api/admin/approve-store', )
+        }catch(error){
+
+        }
     }
 
     const handleApprove = async ({ storeId, status }) => {
