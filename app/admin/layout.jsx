@@ -3,8 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-    title: "GoCart. - Admin",
-    description: "GoCart. - Admin",
+    title: "IpayeCart. - Admin",
+    description: "IpayeCart. - Admin",
 };
 
 export default async function RootAdminLayout({ children }) {
