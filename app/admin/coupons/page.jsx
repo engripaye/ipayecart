@@ -24,7 +24,16 @@ export default function AdminCoupons() {
     })
 
     const fetchCoupons = async () => {
-        setCoupons(couponDummyData)
+        try{
+            const token = await getToken()
+            const { data } = axios.get('/api/admin/coupon', {headers: {
+                Authorization: `Bearer ${token}`
+                }})
+            setCoupons(data.coupons)
+        }catch(error){
+            toast.error(error?.response?.data?.error || error.message)
+
+        }
     }
 
     const handleAddCoupon = async (e) => {
