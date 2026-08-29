@@ -25,17 +25,23 @@ export default function AdminCoupons() {
     })
 
     const fetchCoupons = async () => {
-        try{
-            const token = await getToken()
-            const { data } = axios.get('/api/admin/coupon', {headers: {
-                Authorization: `Bearer ${token}`
-                }})
-            setCoupons(data.coupons)
-        }catch(error){
-            toast.error(error?.response?.data?.error || error.message)
+        try {
+            const token = await getToken();
 
+            const { data } = await axios.get("/api/admin/coupon", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            setCoupons(data.coupons);
+
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.error || error.message
+            );
         }
-    }
+    };
 
     const handleAddCoupon = async (e) => {
         e.preventDefault();
@@ -83,7 +89,7 @@ export default function AdminCoupons() {
                     Authorization: `Bearer ${token}`
                 }})
             await fetchCoupons()
-            toasy.success("Coupon deleted successfully")
+            toast.success("Coupon deleted successfully")
 
         }catch(error){
             toast.error(error?.response?.data?.error || error.message)
