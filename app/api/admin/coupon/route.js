@@ -41,8 +41,13 @@ export async function DELETE(request){
         if(!isAdmin){
             return NextResponse.json({ error: "not authorized"}, {stataus: 401})
         }
-        const { searchParams }
-    }catch (error){
+        const { searchParams } = request.NextUrl;
+        const code = searchParams.get('code')
 
+        await prisma.coupon.delete({where: { code }})
+        return NextResponse.json({ message: 'Coupon deleted successfully'})
+    }catch (error){
+        console.error(error)
+        return NextResponse.json({error: error.code || error.message}, {status: 400})
     }
 }
