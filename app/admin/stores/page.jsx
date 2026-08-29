@@ -18,7 +18,7 @@ export default function AdminStores() {
     const fetchStores = async () => {
         try{
             const token = await getToken()
-            const { data } = await axios.get('/api/admin/stores', {header: {
+            const { data } = await axios.get('/api/admin/stores', {headers: {
                 Authorization: `Bearer ${token}`
                 }})
             setStores(data.stores)
@@ -31,12 +31,24 @@ export default function AdminStores() {
 
     const toggleIsActive = async (storeId) => {
         // Logic to toggle the status of a store
+        try{
+            const token = await getToken()
+            const { data } = await axios.post('/api/admin/toggle-store', {storeId},
+                {headers: {Authorization: `Bearer ${token}`}})
+            await fetchStores()
+            toast.success(data.message)
+        }catch(error){
+            toast.error(error?.response?.data?.error || error.message)
+        }
 
     }
 
     useEffect(() => {
+        if(user){
+            fetchStores()
+        }
         fetchStores()
-    }, [])
+    }, [user])
 
     return !loading ? (
         <div className="text-slate-500 mb-28">
