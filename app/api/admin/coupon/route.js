@@ -63,7 +63,7 @@ export async function GET(request){
         }
 
         const coupons = await prisma.coupon.findMany({})
-
+        return NextResponse.json({coupons})
     }catch (error){
         console.error(error)
         return NextResponse.json({error: error.code || error.message}, {status: 400})
