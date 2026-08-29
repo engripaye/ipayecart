@@ -38,25 +38,36 @@ export default function AdminCoupons() {
     }
 
     const handleAddCoupon = async (e) => {
-        e.preventDefault()
-        // Logic to add a coupon
-        try{
-            const token = await getToken()
+        e.preventDefault();
 
-            newCoupon.discount = Number(newCoupon.discount)
-            newCoupon.expiresAt = new Date(newCoupon.expiresAt)
+        try {
+            const token = await getToken();
 
-            const { data } = await axios.post('/api/admin/coupon', {newCoupon},{headers: {
-                    Authorization: `Bearer ${token}`
-                }})
-            toast.success(data.message)
-            await fetchCoupons()
-        }catch(error){
-            toast.error(error?.response?.data?.error || error.message)
+            const coupon = {
+                ...newCoupon,
+                discount: Number(newCoupon.discount),
+                expiresAt: new Date(newCoupon.expiresAt),
+            };
+
+            const { data } = await axios.post(
+                "/api/admin/coupon",
+                { coupon },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            toast.success(data.message);
+            await fetchCoupons();
+
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.error || error.message
+            );
         }
-
-
-    }
+    };
 
     const handleChange = (e) => {
         setNewCoupon({ ...newCoupon, [e.target.name]: e.target.value })
