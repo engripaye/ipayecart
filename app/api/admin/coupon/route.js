@@ -9,7 +9,7 @@ export async function POST(request){
     try {
 
         const { userId } = getAuth()
-        const isAdmin = await authAdmin()
+        const isAdmin = await authAdmin(userId)
 
         if(!isAdmin){
             return NextResponse.json({ error: "not authorized"}, {stataus: 401})
@@ -27,7 +27,22 @@ export async function POST(request){
     }catch(error){
 
         console.error(error)
-        return NextResponse.json({})
+        return NextResponse.json({error: error.code || error.message}, {status: 400})
+
+    }
+}
+
+// delete coupon /api/coupon?id=couponId
+export async function DELETE(request){
+    try{
+        const { userId } = getAuth()
+        const isAdmin = await authAdmin(userId)
+
+        if(!isAdmin){
+            return NextResponse.json({ error: "not authorized"}, {stataus: 401})
+        }
+        const { searchParams }
+    }catch (error){
 
     }
 }
