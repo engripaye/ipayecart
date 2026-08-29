@@ -5,6 +5,7 @@ import toast from "react-hot-toast"
 import { DeleteIcon } from "lucide-react"
 import { couponDummyData } from "@/assets/assets"
 import {useAuth} from "@clerk/nextjs";
+import axios from "axios";
 
 export default function AdminCoupons() {
 
@@ -39,6 +40,20 @@ export default function AdminCoupons() {
     const handleAddCoupon = async (e) => {
         e.preventDefault()
         // Logic to add a coupon
+        try{
+            const token = await getToken()
+
+            newCoupon.discount = Number(newCoupon.discount)
+            newCoupon.expiresAt = new Date(newCoupon.expiresAt)
+
+            const { data } = await axios.post('/api/admin/coupon', {newCoupon},{headers: {
+                    Authorization: `Bearer ${token}`
+                }})
+            toast.success(data.message)
+            await fetchCoupons()
+        }catch(error){
+            toast.error(error?.response?.data?.error || error.message)
+        }
 
 
     }
