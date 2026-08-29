@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import authAdmin from "@/middleware/authAdmin";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { inngest} from "@/inngest/client";
 
 // Add new coupon
 export async function POST(request) {
@@ -30,7 +31,16 @@ export async function POST(request) {
 
         await prisma.coupon.create({
             data: coupon,
-        });
+        }).then(async (coupon) => {
+            // Run inngest schedular function to delete coupon on expore
+            await inngest.send({
+                name: "app/coupon.expired",
+                data: {
+                    code: coupon.code,
+                    expires_at: coupon.expiresAt,
+                }
+            })
+        })
 
         return NextResponse.json({
             message: "Coupon added successfully",
