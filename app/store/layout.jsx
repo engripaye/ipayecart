@@ -1,5 +1,7 @@
 import StoreLayout from "@/components/store/StoreLayout";
-import {SignedIn, SignedOut, SignIn} from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
 export const metadata = {
     title: "IpayeCart. - Store Dashboard",
     description: "IpayeCart. - Store Dashboard",
