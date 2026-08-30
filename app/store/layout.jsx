@@ -7,21 +7,17 @@ export const metadata = {
     description: "IpayeCart. - Store Dashboard",
 };
 
-export default function RootAdminLayout({ children }) {
+export default async function RootAdminLayout({ children }) {
+
+    const { userId } = await auth();
+
+    if (!userId) {
+        redirect("/sign-in?redirect_url=/store");
+    }
 
     return (
-        <>
-            <SignedIn>
-                <StoreLayout>
-                    {children}
-                </StoreLayout>
-            </SignedIn>
-            <SignedOut>
-                <div className="min-h-screen flex items-center justify-center">
-                    <SignIn fallbackRedirectUrl="/store"/>
-                </div>
-            </SignedOut>
-
-        </>
+        <StoreLayout>
+            {children}
+        </StoreLayout>
     );
 }
