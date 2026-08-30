@@ -7,7 +7,7 @@ export const metadata = {
     description: "IpayeCart. - Store Dashboard",
 };
 
-export default async function RootAdminLayout({ children }) {
+export default async function RootStoreLayout({ children }) {
 
     const { userId } = await auth();
 
