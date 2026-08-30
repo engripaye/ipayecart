@@ -84,6 +84,7 @@ export const deleteCouponOnExpiry = inngest.createFunction(
             expiryDate
         );
 
+
         await step.run(
             "delete-coupon-from-database",
             async () => {
