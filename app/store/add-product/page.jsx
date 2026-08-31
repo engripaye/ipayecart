@@ -32,7 +32,7 @@ export default function StoreAddProduct() {
         // Logic to add a product
         try{
             // if no images are uploaded then return
-            if(!images[1] && !images[2] && !images[3] && !images[4]{
+            if(!images[1] && !images[2] && !images[3] && !images[4]){
                 return toast.error('Please upload at least one image')
             }
             setLoading(true)
@@ -55,8 +55,24 @@ export default function StoreAddProduct() {
                 }
             })
             toast.success(data.message)
-        }catch (error){
 
+            // reset form
+            setProductInfo({
+                name: "",
+                description: "",
+                mrp: 0,
+                price: 0,
+                category: "",
+
+            })
+
+            // reset images
+            setImages({1: null, 2: null, 3: null, 4: null })
+        }catch (error){
+            toast.error(error?.response?.data?.error || error.message)
+        }
+        finally {
+            setLoading(false)
         }
         
     }
