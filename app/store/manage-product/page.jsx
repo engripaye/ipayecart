@@ -33,7 +33,7 @@ export default function StoreManageProducts() {
         // Logic to toggle the stock of a product
        try{
            const token = await getToken()
-           const { data } = await axios.post('/api/store/stock-togge', {productId}, {
+           const { data } = await axios.post('/api/store/stock-toggle', {productId}, {
                headers: { Authorization: `Bearer ${token}`}
            })
            setProducts(prevProducts => prevProducts.map(product => productId === productId
