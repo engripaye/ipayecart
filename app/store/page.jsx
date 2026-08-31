@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import {useAuth} from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export default function Dashboard() {
 
