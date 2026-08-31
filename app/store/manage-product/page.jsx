@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
 import Image from "next/image"
 import Loading from "@/components/Loading"
-import { productDummyData } from "@/assets/assets"
 import {useAuth, useUser} from "@clerk/nextjs";
 
 export default function StoreManageProducts() {
@@ -24,9 +23,9 @@ export default function StoreManageProducts() {
             })
             setProducts(data.products.sort((a, b) =>new Date(b.createdAt) - new Date(a.createdAt)))
         }catch (error){
-            toast.error()
-
+            toast.error(error?.response?.data?.error || error.message)
         }
+        setLoading(false)
     }
 
     const toggleStock = async (productId) => {
@@ -36,8 +35,11 @@ export default function StoreManageProducts() {
     }
 
     useEffect(() => {
+        if(user){
             fetchProducts()
-    }, [])
+        }
+
+    }, [user])
 
     if (loading) return <Loading />
 
