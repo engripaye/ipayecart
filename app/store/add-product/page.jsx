@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
 import {useAuth} from "@clerk/nextjs";
+import axios from "axios";
 
 export default function StoreAddProduct() {
 
@@ -43,6 +44,17 @@ export default function StoreAddProduct() {
             formData.append('price', productInfo.price)
             formData.append('category', productInfo.category)
 
+            // Adding images to form data
+            Object.keys(images).forEach((key)=>{
+                images[key] && formData.append('images', images[key])
+            })
+            const token = await getToken()
+            const { data } = await axios.post('/api/store/product', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast.success(data.message)
         }catch (error){
 
         }
