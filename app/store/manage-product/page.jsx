@@ -41,7 +41,7 @@ export default function StoreManageProducts() {
 
            toast.success(data.message)
        }catch (error){
-
+           toast.error(error?.response?.data?.error || error.message)
        }
 
 
