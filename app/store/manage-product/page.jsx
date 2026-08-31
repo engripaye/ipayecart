@@ -32,9 +32,11 @@ export default function StoreManageProducts() {
     const toggleStock = async (productId) => {
         // Logic to toggle the stock of a product
         const token = await getToken()
-        const { data } = await axios.get('/api/store/product', {
+        const { data } = await axios.post('/api/store/stock-togge', {productId}, {
             headers: { Authorization: `Bearer ${token}`}
         })
+        setProducts(prevProducts => prevProducts.map(product => productId === productId
+        ? {...product, inStock: !product.inStock} : product))
 
     }
 
