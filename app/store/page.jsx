@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import {useAuth} from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
 
@@ -40,9 +41,9 @@ export default function Dashboard() {
             })
             setDashboardData(data.dashboardData)
         }catch(error){
-            toast.error()
-
+            toast.error(error?.response?.data?.error || error.message)
         }
+        setLoading(false)
     }
 
     useEffect(() => {
