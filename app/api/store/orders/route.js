@@ -46,7 +46,7 @@ export async function GET(request) {
             where: {
                 storeId,
             }, include: {
-            User: true, address: true, orderItems: {
+            user: true, address: true, orderItems: {
             include: {
                 product: true
             }
