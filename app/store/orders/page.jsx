@@ -1,7 +1,8 @@
 'use client'
 import { useEffect, useState } from "react"
 import Loading from "@/components/Loading"
-import { orderDummyData } from "@/assets/assets"
+import {useAuth} from "@clerk/nextjs";
+import axios from "axios";
 
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
@@ -9,10 +10,20 @@ export default function StoreOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
+    const {getToken} = useAuth()
 
     const fetchOrders = async () => {
-       setOrders(orderDummyData)
-       setLoading(false)
+        try {
+            const token = await getToken()
+            const { data } = await axios.get('/api/store/orders', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setOrders(data.orders)
+        }catch(error){
+
+        }
     }
 
     const updateOrderStatus = async (orderId, status) => {
