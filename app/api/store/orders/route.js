@@ -1,7 +1,7 @@
 import {getAuth} from "@clerk/nextjs/server";
 import {NextResponse} from "next/server";
 import authSeller from "@/middleware/authSeller";
-
+import prisma from "@/lib/prisma";
 // update seller order status
 
 
