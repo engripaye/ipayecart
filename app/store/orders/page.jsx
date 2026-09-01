@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import Loading from "@/components/Loading"
 import {useAuth} from "@clerk/nextjs";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
@@ -22,7 +23,9 @@ export default function StoreOrders() {
             })
             setOrders(data.orders)
         }catch(error){
-
+            toast.error(error?.response?.data?.error || error.message)
+        } finally {
+            setLoading(false)
         }
     }
 
