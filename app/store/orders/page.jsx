@@ -38,7 +38,10 @@ export default function StoreOrders() {
                     Authorization: `Bearer ${token}`
                 }
             })
-            setOrders(prev => prev.map( order => order.id === orderId))
+            setOrders(prev => prev.map( order => order.id === orderId ? {
+                ...order, status
+            } : order ))
+            toast.success("Order status updated")
         }catch(error){
             toast.error(error?.response?.data?.error || error.message)
         }
