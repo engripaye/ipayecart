@@ -40,8 +40,11 @@ const AddressModal = ({ setShowAddressModal }) => {
             }})
             dispatch(addAddress(data.newAddress))
             toast.success(data.message)
-
+            setShowAddressModal(false)
         }catch (error) {
+            console.log(error)
+            toast.error(error?.response?.data?.error || error.message)
+        }
     }
 
     return (
