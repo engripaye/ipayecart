@@ -10,7 +10,7 @@ export default function PublicLayout({ children }) {
 
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(fetchProducts())
+        dispatch(fetchProducts({}))
     }, [])
     return (
         <>
