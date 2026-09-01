@@ -18,7 +18,9 @@ export async function POST(request){
             message: "cart updated"
         })
     }catch(error){
-
+        console.log(error);
+        return NextResponse.json({ error: error.message}
+            , {status: 400})
     }
 }
 
@@ -35,7 +37,8 @@ export async function GET(request){
             cart: user.cart
         })
     }catch(error){
-        console
-
+        console.log(error);
+        return NextResponse.json({ error: error.message}
+            , {status: 400})
     }
 }
