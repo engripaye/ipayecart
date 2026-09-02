@@ -28,9 +28,16 @@ export async function POST(request) {
             }
         }
 
-        if(coupon.forMember){
-        const has
-    }
+        if(coupon.forMember) {
+            const hasPlusPlan = has({plan: 'plus'})
+            if (!hasPlusPlan) {
+                return NextResponse.json({error: "Coupon valid for members only"}, {status: 400})
+            }
+        }
+        return NextResponse.json({coupon})
 
     }catch (error){
+        console.error(error)
+        return NextResponse.json({error: error.code || error.message}, {status: 400})
+    }
 }
