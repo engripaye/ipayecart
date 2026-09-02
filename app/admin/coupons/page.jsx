@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import toast from "react-hot-toast"
 import { DeleteIcon } from "lucide-react"
-import { couponDummyData } from "@/assets/assets"
 import {useAuth} from "@clerk/nextjs";
 import axios from "axios";
 
@@ -21,9 +20,8 @@ export default function AdminCoupons() {
         forNewUser: false,
         forMember: false,
         isPublic: false,
-        expiresAt: new Date()
+        expiresAt: ''
     })
-
     const fetchCoupons = async () => {
         try {
             const token = await getToken();
@@ -121,8 +119,15 @@ export default function AdminCoupons() {
 
                 <label>
                     <p className="mt-3">Coupon Expiry Date</p>
-                    <input type="date" placeholder="Coupon Expires At" className="w-full mt-1 p-2 border border-slate-200 outline-slate-400 rounded-md"
-                        name="expiresAt" value={format(newCoupon.expiresAt, 'yyyy-MM-dd')} onChange={handleChange}
+
+                    <input
+                        type="date"
+                        placeholder="Coupon Expires At"
+                        className="w-full mt-1 p-2 border border-slate-200 outline-slate-400 rounded-md"
+                        name="expiresAt"
+                        value={newCoupon.expiresAt}
+                        onChange={handleChange}
+                        required
                     />
                 </label>
 
