@@ -1,13 +1,14 @@
 import {useAuth} from "@clerk/nextjs";
 import prisma from "@/lib/prisma";
 import {NextResponse} from "next/server";
+import {getAuth} from "@clerk/nextjs/server";
 
 // verify coupon
 
 
 export async function POST(request) {
     try {
-        const {userId, has} = useAuth(request)
+        const {userId, has} = getAuth(request)
         const {code} = await request.json()
 
         const coupon = await prisma.coupon.findUnique({
