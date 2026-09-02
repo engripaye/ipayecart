@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import {Show, useAuth, useUser} from "@clerk/nextjs";
+import axios from "axios";
 
 const OrderSummary = ({ totalPrice, items }) => {
 
@@ -32,7 +33,17 @@ const OrderSummary = ({ totalPrice, items }) => {
         e.preventDefault();
         try {
 
+            if(!user){
+                return toast('please login to proceed')
+            }
+            const token = await getToken()
+            const { data } = await axios.post('/api/coupon', {code: couponCodeInput}, {
+                headers: { Authorization: `Bearer ${token}`}
+            })
+            setCoupon(data.coupon)
         }catch (error){
+
+
 
         }
         router.push('/orders')
