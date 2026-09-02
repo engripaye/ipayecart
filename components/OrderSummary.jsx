@@ -103,7 +103,7 @@ const OrderSummary = ({ totalPrice, items }) => {
 
                 <p className='font-medium text-right'>
                     <Show when={{ plan: "plus"}} fallback={`${currency}${coupon ? (totalPrice + 5 - (coupon.discount / 100 * totalPrice)).toFixed(2) : (totalPrice + 5).toLocaleString()}`}>
-
+                        {currency}{coupon ? (totalPrice - (coupon.discount / 100 * totalPrice)).toFixed(2) : totalPrice .toLocaleString()}
                     </Show>
                     </p>
             </div>
