@@ -4,9 +4,12 @@ import AddressModal from './AddressModal';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import {Show} from "@clerk/nextjs";
+import {Show, useAuth, useUser} from "@clerk/nextjs";
 
 const OrderSummary = ({ totalPrice, items }) => {
+
+    const { user } = useUser()
+    const { getToken } = useAuth()
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
 
@@ -27,7 +30,11 @@ const OrderSummary = ({ totalPrice, items }) => {
 
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
+        try {
 
+        }catch (error){
+
+        }
         router.push('/orders')
     }
 
