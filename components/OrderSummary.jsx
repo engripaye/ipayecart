@@ -41,12 +41,10 @@ const OrderSummary = ({ totalPrice, items }) => {
                 headers: { Authorization: `Bearer ${token}`}
             })
             setCoupon(data.coupon)
+            toast.success('coupon applied')
         }catch (error){
-
-
-
+            toast.error(error?.response?.data?.error || error.message)
         }
-        router.push('/orders')
     }
 
     return (
