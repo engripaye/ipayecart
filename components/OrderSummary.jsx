@@ -26,26 +26,65 @@ const OrderSummary = ({ totalPrice, items }) => {
 
     const handleCouponCode = async (event) => {
         event.preventDefault();
-        
-    }
+
+        try {
+            if (!user) {
+                return toast("Please login to apply a coupon");
+            }
+
+            if (!couponCodeInput.trim()) {
+                return toast.error("Please enter a coupon code");
+            }
+
+            const token = await getToken();
+
+            const { data } = await axios.post(
+                "/api/coupon",
+                {
+                    code: couponCodeInput.trim(),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setCoupon(data.coupon);
+
+            toast.success("Coupon applied successfully");
+
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.error ||
+                error.message ||
+                "Failed to apply coupon"
+            );
+        }
+    };
 
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
-        try {
 
-            if(!user){
-                return toast('please login to proceed')
+        try {
+            if (!user) {
+                return toast("Please login to proceed");
             }
-            const token = await getToken()
-            const { data } = await axios.post('/api/coupon', {code: couponCodeInput}, {
-                headers: { Authorization: `Bearer ${token}`}
-            })
-            setCoupon(data.coupon)
-            toast.success('coupon applied')
-        }catch (error){
-            toast.error(error?.response?.data?.error || error.message)
+
+            if (!selectedAddress) {
+                return toast.error("Please select an address");
+            }
+
+            // Your actual order-placement logic goes here.
+
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.error ||
+                error.message ||
+                "Failed to place order"
+            );
         }
-    }
+    };
 
     return (
         <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
