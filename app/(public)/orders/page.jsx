@@ -9,7 +9,7 @@ import {useRouter} from "next/navigation";
 
 export default function Orders() {
 
-    const [getToken] = useAuth()
+    const {getToken} = useAuth()
     const {user, isLoaded } = useUser()
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
