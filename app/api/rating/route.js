@@ -37,8 +37,11 @@ export async function POST(request) {
             }
         })
 
-        return NextResponse.json({ message: 'Rating added successfully', response });
+        return NextResponse.json({ message: 'Rating added successfully', rating: response });
     }catch (error) {
+
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
 
     }
 }
