@@ -5,6 +5,7 @@ import OrderItem from "@/components/OrderItem";
 import {useAuth, useUser} from "@clerk/nextjs";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {useRouter} from "next/navigation";
 
 export default function Orders() {
 
@@ -12,6 +13,8 @@ export default function Orders() {
     const {user, isLoaded } = useUser()
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter()
+
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -22,15 +25,26 @@ export default function Orders() {
                         Authorization: `Bearer ${token}`
                     }})
                 setOrders(data.orders)
-                setLoading(fale)
+                setLoading(false)
 
             }catch (error) {
                 toast.error(error?.response?.data?.error || error.message)
             }
 
         }
+        if (isLoaded)
+        {
+            if(user){
+                fetchOrders()
+            }else {
+                router.push('/')
+            }
+        }
+    }, [isLoaded. user, getToken, router]);
 
-    }, []);
+    if(!isLoaded || loading){
+        return < loading />
+    }
 
     return (
         <div className="min-h-[70vh] mx-6">
