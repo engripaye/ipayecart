@@ -22,25 +22,23 @@ export async function POST(request) {
             coupon = await prisma.coupon.findFirst({
                 where: { code: couponCode },
             });
+
+            if (!coupon) {
+                return NextResponse.json(
+                    { error: "Coupon not found or expired" },
+                    { status: 400 }
+                );
+            }
         }
 
 
-
-        if (!coupon) {
-            return NextResponse.json(
-                { error: "Coupon not found or expired" },
-                { status: 404 }
-            );
-        }
-
-        // New-user coupon
-        if (coupon.forNewUser) {
+        // check if coupon is applicable for new users
+        if (couponCode && coupon.forNewUser) {
             const userOrders = await prisma.order.findMany({
                 where: {
                     userId,
                 },
             });
-
             if (userOrders.length > 0) {
                 return NextResponse.json(
                     { error: "Coupon valid for new users only" },
@@ -49,7 +47,7 @@ export async function POST(request) {
             }
         }
 
-        // Plus-member coupon
+
         if (coupon.forMember) {
             const hasPlusPlan = has({ plan: "plus" });
 
