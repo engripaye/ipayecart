@@ -17,11 +17,11 @@ export async function POST(request) {
 
         await prisma.order.update({
             where: {
-                id: orderId, storeId,
-                data: {
-                    status
-                }
+                id: orderId
             },
+            data: {
+                status
+            }
         })
         return NextResponse.json({ message: 'Order status updated successfully' });
 
