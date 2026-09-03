@@ -84,6 +84,26 @@ export async function POST(request) {
                 total -= (total * coupon.discount) / 100;
             }
 
+            if(!isPlusMember && !isShippingFeeAdded){
+                total += 5;
+                isShippingFeeAdded = true;
+
+            }
+
+            fullAmount += parseFloat(total.toFixed(2))
+
+            const order = await prisma.order.create({
+                data: {
+                    userId,
+                    storeId,
+                    items: storeItems,
+                    total: parseFloat(total.toFixed(2)),
+                    addressId,
+                    paymentMethod,
+                    couponId: coupon?.id || null
+                }
+            });
+
         }
 
     }catch (error){
