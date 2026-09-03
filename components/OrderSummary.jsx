@@ -76,6 +76,20 @@ const OrderSummary = ({ totalPrice, items }) => {
             }
 
             // Your actual order-placement logic goes here.
+            const token = await getToken();
+
+            const orderData = {
+                addressId: selectedAddress.id,
+                items,
+                paymentMethod
+            }
+
+            if(coupon){
+                orderData.couponCode = coupon.code
+            }
+
+            // create order
+
 
         } catch (error) {
             toast.error(
