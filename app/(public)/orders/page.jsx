@@ -20,7 +20,7 @@ export default function Orders() {
         const fetchOrders = async () => {
             try {
                 const token = await getToken()
-                const { data } = await axios.get('/api/orders', {
+                const { data } = await axios.get('/api/order', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }})
