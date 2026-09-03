@@ -4,21 +4,30 @@ import { useEffect, useState } from "react";
 import OrderItem from "@/components/OrderItem";
 import {useAuth, useUser} from "@clerk/nextjs";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Orders() {
 
     const [getToken] = useAuth()
     const {user, isLoaded } = useUser()
     const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const token = await getToken()
-                const { data } = await axios.get('/api/orders')
-            }catch (error) {
+                const { data } = await axios.get('/api/orders', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }})
+                setOrders(data.orders)
+                setLoading(fale)
 
+            }catch (error) {
+                toast.error(error?.response?.data?.error || error.message)
             }
+
         }
 
     }, []);
