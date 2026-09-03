@@ -50,7 +50,7 @@ export default function Orders() {
     }, [isLoaded, user, getToken, router]);
 
     if(!isLoaded || loading){
-        return < loading />
+        return < loading />;
     }
 
     return (
