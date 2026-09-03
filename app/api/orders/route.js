@@ -129,3 +129,14 @@ export async function POST(request) {
 
     }
 }
+
+// Get all orders for a user
+export async function GET(request) {
+    try {
+
+
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
+    }
+}
