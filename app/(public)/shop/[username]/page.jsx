@@ -6,6 +6,7 @@ import { MailIcon, MapPinIcon } from "lucide-react"
 import Loading from "@/components/Loading"
 import Image from "next/image"
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function StoreShop() {
 
@@ -21,9 +22,11 @@ export default function StoreShop() {
             setProducts(data.store.Product)
 
     }catch(error){
-
+        toast.error(error?.response?.data?.error || error.message)
         }
-        
+
+        setLoading(false)
+
     }
 
     useEffect(() => {
