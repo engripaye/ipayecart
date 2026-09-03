@@ -45,3 +45,16 @@ export async function POST(request) {
 
     }
 }
+
+// Get all ratings for a user
+export async function GET(request) {
+    try {
+        const { userId } = getAuth(request)
+        if(!userId) {
+            return NextResponse.json({ error: 'not authorized' }, { status: 401 });
+        }
+    }catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
+    }
+}
