@@ -53,6 +53,10 @@ export async function GET(request) {
         if(!userId) {
             return NextResponse.json({ error: 'not authorized' }, { status: 401 });
         }
+        const ratings = await prisma.rating.findMany({
+            where: {userId}
+        });
+        return NextResponse.json({ ratings });
     }catch (error) {
         console.error(error);
         return NextResponse.json({ error: error.code || error.message }, { status: 400 });
