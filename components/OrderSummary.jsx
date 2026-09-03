@@ -89,7 +89,20 @@ const OrderSummary = ({ totalPrice, items }) => {
             }
 
             // create order
+            const { data } = await axios.post('/api/orders', orderData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
+            if( paymentMethod === 'STRIPE') {
+                window.location.href = data.session.url;
+
+            }else {
+                toast.success(data.message)
+                router.push('/orders')
+
+            }
 
         } catch (error) {
             toast.error(
