@@ -116,6 +116,13 @@ export async function POST(request) {
 
         }
 
+        // clear the cart
+        await prisma.user.update({
+            where: {id: userId},
+            data: {cart: {}}
+        });
+
+        return NextResponse.json({message: "Order placed successfully"});
     }catch (error){
 
     }
