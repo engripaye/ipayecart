@@ -47,17 +47,45 @@ export async function POST(request) {
             }
         }
 
+        const isPlusMember = has({ plan: "plus" });
 
-        if (coupon.forMember) {
-            const hasPlusPlan = has({ plan: "plus" });
-
-            if (!hasPlusPlan) {
+        // check if coupon is applicable for members
+        if (couponCode && coupon.forMember) {
+            if (!isPlusMember) {
                 return NextResponse.json(
                     { error: "Coupon valid for Plus members only" },
                     { status: 400 }
                 );
             }
         }
+
+        // group orders by storeId using a map
+        const ordersByStore = new Map();
+
+        for (const  item of items) {
+            const product = await prisma.product.findUnique({
+                where: { id: item.Id }})
+                const storeId = product.storeId;
+                if(!ordersByStore.has(storeId)){
+                    ordersByStore.set(storeId, []);
+                }
+                ordersByStore.get(storeId).push({...item, price: product.price});
+            }
+        let orderIds = [];
+        let fullAmount = 0;
+
+        let isShippingFeeAdded = false;
+
+        // create orders for each seller
+        for (const [storeId, storeItems] of ordersByStore.entries()) {
+            let total = sellerItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+            if (couponCode){
+                total -= (total * coupon.discount) / 100;
+            }
+
+        }
+
     }catch (error){
 
     }
