@@ -133,7 +133,12 @@ export async function POST(request) {
 // Get all orders for a user
 export async function GET(request) {
     try {
-
+        const { userId } = getAuth(request);
+        const orders = await prisma.order.findMany({
+            where: { userId },
+            OR: [{paymentMethod: paymentMethod.COD},
+                {AND: [{paymentMethod: paymentMethod.STRIPE}, {isPaid: true}]}],
+        }
 
     } catch (error) {
         console.error(error);
