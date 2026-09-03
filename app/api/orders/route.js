@@ -1,27 +1,56 @@
-import {getAuth} from "@clerk/nextjs/server";
-import {NextResponse} from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import * as sellerItems from "recharts/types/util/scale/util/utils";
-
 
 export async function POST(request) {
-    try{
-        const { userId, has} = getAuth(request);
-        if(!userId){
-            return NextResponse.json({error: "Unauthorized"}, {status: 401})
-        }
-        const { addressId, items, couponCode, paymentMethod} = await request.json();
+    try {
+        const { userId, has } = getAuth(request);
 
-        // check if all required fields are present
-        if(!addressId || !paymentMethod || !items || !Array.isArray(items) || items.length === 0){
-            return NextResponse.json({error: "missing order details"}, {status: 401})
+        // Check authentication
+        if (!userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
         }
+
+        const {
+            addressId,
+            items,
+            couponCode,
+            paymentMethod
+        } = await request.json();
+
+        // Check required fields
+        if (
+            !addressId ||
+            !paymentMethod ||
+            !items ||
+            !Array.isArray(items) ||
+            items.length === 0
+        ) {
+            return NextResponse.json(
+                { error: "Missing order details" },
+                { status: 400 }
+            );
+        }
+
+        // ----------------------------------------
+        // VERIFY COUPON
+        // ----------------------------------------
 
         let coupon = null;
 
-        if(couponCode){
+        if (couponCode) {
+            const normalizedCouponCode = couponCode.trim().toUpperCase();
+
             coupon = await prisma.coupon.findFirst({
-                where: { code: couponCode },
+                where: {
+                    code: normalizedCouponCode,
+                    expiresAt: {
+                        gt: new Date()
+                    }
+                }
             });
 
             if (!coupon) {
@@ -30,126 +59,246 @@ export async function POST(request) {
                     { status: 400 }
                 );
             }
-        }
 
+            // Check new-user coupon
+            if (coupon.forNewUser) {
+                const userOrders = await prisma.order.findMany({
+                    where: {
+                        userId
+                    }
+                });
 
-        // check if coupon is applicable for new users
-        if (couponCode && coupon.forNewUser) {
-            const userOrders = await prisma.order.findMany({
-                where: {
-                    userId,
-                },
-            });
-            if (userOrders.length > 0) {
-                return NextResponse.json(
-                    { error: "Coupon valid for new users only" },
-                    { status: 400 }
-                );
+                if (userOrders.length > 0) {
+                    return NextResponse.json(
+                        {
+                            error: "Coupon valid for new users only"
+                        },
+                        { status: 400 }
+                    );
+                }
+            }
+
+            // Check Plus-member coupon
+            if (coupon.forMember) {
+                const isPlusMember = has({ plan: "plus" });
+
+                if (!isPlusMember) {
+                    return NextResponse.json(
+                        {
+                            error: "Coupon valid for Plus members only"
+                        },
+                        { status: 400 }
+                    );
+                }
             }
         }
+
+        // ----------------------------------------
+        // CHECK PLUS MEMBERSHIP
+        // ----------------------------------------
 
         const isPlusMember = has({ plan: "plus" });
 
-        // check if coupon is applicable for members
-        if (couponCode && coupon.forMember) {
-            if (!isPlusMember) {
+        // ----------------------------------------
+        // GROUP ITEMS BY STORE
+        // ----------------------------------------
+
+        const ordersByStore = new Map();
+
+        for (const item of items) {
+
+            const product = await prisma.product.findUnique({
+                where: {
+                    id: item.id
+                }
+            });
+
+            if (!product) {
                 return NextResponse.json(
-                    { error: "Coupon valid for Plus members only" },
+                    {
+                        error: `Product not found: ${item.id}`
+                    },
+                    { status: 404 }
+                );
+            }
+
+            if (!item.quantity || item.quantity < 1) {
+                return NextResponse.json(
+                    {
+                        error: "Invalid product quantity"
+                    },
                     { status: 400 }
                 );
             }
+
+            const storeId = product.storeId;
+
+            if (!ordersByStore.has(storeId)) {
+                ordersByStore.set(storeId, []);
+            }
+
+            ordersByStore.get(storeId).push({
+                ...item,
+                price: product.price
+            });
         }
 
-        // group orders by storeId using a map
-        const ordersByStore = new Map();
+        // ----------------------------------------
+        // CREATE ORDERS
+        // ----------------------------------------
 
-        for (const  item of items) {
-            const product = await prisma.product.findUnique({
-                where: { id: item.Id }})
-                const storeId = product.storeId;
-                if(!ordersByStore.has(storeId)){
-                    ordersByStore.set(storeId, []);
-                }
-                ordersByStore.get(storeId).push({...item, price: product.price});
-            }
-        let orderIds = [];
+        const orderIds = [];
         let fullAmount = 0;
-
         let isShippingFeeAdded = false;
 
-        // create orders for each seller
         for (const [storeId, storeItems] of ordersByStore.entries()) {
-            let total = sellerItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-            if (couponCode){
+            // Calculate seller subtotal
+            let total = storeItems.reduce(
+                (acc, item) => acc + item.price * item.quantity,
+                0
+            );
+
+            // Apply coupon discount
+            if (coupon) {
                 total -= (total * coupon.discount) / 100;
             }
 
-            if(!isPlusMember && !isShippingFeeAdded){
+            // Free shipping for Plus members
+            // Otherwise add $5 shipping once
+            if (!isPlusMember && !isShippingFeeAdded) {
                 total += 5;
                 isShippingFeeAdded = true;
-
             }
 
-            fullAmount += parseFloat(total.toFixed(2))
+            total = parseFloat(total.toFixed(2));
 
+            fullAmount += total;
+
+            // Create order
             const order = await prisma.order.create({
                 data: {
                     userId,
                     storeId,
                     addressId,
-                    total: parseFloat(total.toFixed(2)),
+                    total,
                     paymentMethod,
-                    isCouponUsed: coupon ? true : false,
-                    coupon: coupon ? coupon : {},
+
+                    isCouponUsed: !!coupon,
+
+                    coupon: coupon
+                        ? {
+                            code: coupon.code,
+                            discount: coupon.discount,
+                            description: coupon.description
+                        }
+                        : {},
+
                     orderItems: {
-                        create: sellerItems.map(item => ({
+                        create: storeItems.map((item) => ({
                             productId: item.id,
                             quantity: item.quantity,
                             price: item.price
-
                         }))
                     }
                 }
             });
-            orderIds.push(order.id);
 
+            orderIds.push(order.id);
         }
 
-        // clear the cart
+        // ----------------------------------------
+        // CLEAR CART
+        // ----------------------------------------
+
         await prisma.user.update({
-            where: {id: userId},
-            data: {cart: {}}
+            where: {
+                id: userId
+            },
+            data: {
+                cart: {}
+            }
         });
 
-        return NextResponse.json({message: "Order placed successfully"});
-    }catch (error){
-        console.error(error);
-        return NextResponse.json({error: error.code || error.message}, {status: 400});
+        return NextResponse.json({
+            message: "Order placed successfully",
+            orderIds,
+            total: fullAmount
+        });
 
+    } catch (error) {
+        console.error("ORDER ERROR:", error);
+
+        return NextResponse.json(
+            {
+                error: error.code || error.message
+            },
+            { status: 400 }
+        );
     }
 }
 
-// Get all orders for a user
+
+// ============================================
+// GET ALL ORDERS FOR CURRENT USER
+// ============================================
+
 export async function GET(request) {
     try {
-        const { userId } = getAuth(request);
-        const orders = await prisma.order.findMany({
-            where: { userId },
-            OR: [{paymentMethod: paymentMethod.COD},
-                {AND: [{paymentMethod: paymentMethod.STRIPE}, {isPaid: true}]}
-            ]},
-            include: {
-                orderItems: {include: {product: true}},
-                            address: true
-                    },
-        orderBy: { createdAt: 'desc' }
-        })
 
-    return NextResponse.json({ orders });
+        const { userId } = getAuth(request);
+
+        // Check authentication
+        if (!userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        const orders = await prisma.order.findMany({
+            where: {
+                userId,
+
+                OR: [
+                    {
+                        paymentMethod: "COD"
+                    },
+                    {
+                        paymentMethod: "STRIPE",
+                        isPaid: true
+                    }
+                ]
+            },
+
+            include: {
+                orderItems: {
+                    include: {
+                        product: true
+                    }
+                },
+
+                address: true
+            },
+
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        return NextResponse.json({
+            orders
+        });
 
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: error.code || error.message }, { status: 400 });
+
+        console.error("GET ORDERS ERROR:", error);
+
+        return NextResponse.json(
+            {
+                error: error.code || error.message
+            },
+            { status: 400 }
+        );
     }
 }
