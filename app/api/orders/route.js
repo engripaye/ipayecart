@@ -1,6 +1,7 @@
 import {getAuth} from "@clerk/nextjs/server";
 import {NextResponse} from "next/server";
 import prisma from "@/lib/prisma";
+import * as sellerItems from "recharts/types/util/scale/util/utils";
 
 
 export async function POST(request) {
@@ -96,13 +97,22 @@ export async function POST(request) {
                 data: {
                     userId,
                     storeId,
-                    items: storeItems,
-                    total: parseFloat(total.toFixed(2)),
                     addressId,
+                    total: parseFloat(total.toFixed(2)),
                     paymentMethod,
-                    couponId: coupon?.id || null
+                    isCouponUsed: coupon ? true : false,
+                    coupon: coupon ? coupon : {},
+                    orderItems: {
+                        create: sellerItems.map(item => ({
+                            productId: item.id,
+                            quantity: item.quantity,
+                            price: item.price
+
+                        }))
+                    }
                 }
             });
+            orderIds.push(order.id);
 
         }
 
