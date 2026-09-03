@@ -124,6 +124,8 @@ export async function POST(request) {
 
         return NextResponse.json({message: "Order placed successfully"});
     }catch (error){
+        console.error(error);
+        return NextResponse.json({error: error.code || error.message}, {status: 400});
 
     }
 }
