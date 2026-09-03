@@ -19,19 +19,26 @@ export default function Orders() {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const token = await getToken()
+                const token = await getToken();
+
                 const { data } = await axios.get('/api/orders', {
                     headers: {
                         Authorization: `Bearer ${token}`
-                    }})
-                setOrders(data.orders)
-                setLoading(false)
+                    }
+                });
 
-            }catch (error) {
-                toast.error(error?.response?.data?.error || error.message)
+                setOrders(data.orders || []);
+
+            } catch (error) {
+                console.error("FETCH ORDERS ERROR:", error);
+                toast.error(
+                    error?.response?.data?.error || error.message
+                );
+            } finally {
+                setLoading(false);
             }
+        };
 
-        }
         if (isLoaded)
         {
             if(user){
@@ -40,7 +47,7 @@ export default function Orders() {
                 router.push('/')
             }
         }
-    }, [isLoaded. user, getToken, router]);
+    }, [isLoaded, user, getToken, router]);
 
     if(!isLoaded || loading){
         return < loading />
