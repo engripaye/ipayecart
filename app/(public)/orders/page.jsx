@@ -3,6 +3,7 @@ import PageTitle from "@/components/PageTitle"
 import { useEffect, useState } from "react";
 import OrderItem from "@/components/OrderItem";
 import {useAuth, useUser} from "@clerk/nextjs";
+import axios from "axios";
 
 export default function Orders() {
 
@@ -11,6 +12,14 @@ export default function Orders() {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const token = await getToken()
+                const { data } = await axios.get('/api/orders')
+            }catch (error) {
+
+            }
+        }
 
     }, []);
 
