@@ -2,14 +2,16 @@
 import PageTitle from "@/components/PageTitle"
 import { useEffect, useState } from "react";
 import OrderItem from "@/components/OrderItem";
-import { orderDummyData } from "@/assets/assets";
+import {useAuth, useUser} from "@clerk/nextjs";
 
 export default function Orders() {
 
+    const [getToken] = useAuth()
+    const {user, isLoaded } = useUser()
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        setOrders(orderDummyData)
+
     }, []);
 
     return (
