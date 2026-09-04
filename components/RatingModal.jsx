@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import {useAuth} from "@clerk/nextjs";
 import {useDispatch} from "react-redux";
 import axios from "axios";
+import {addRating} from "@/lib/features/rating/ratingSlice";
 
 const RatingModal = ({ ratingModal, setRatingModal }) => {
 
@@ -25,13 +26,15 @@ const RatingModal = ({ ratingModal, setRatingModal }) => {
 
         try{
             const token = await getToken()
-            const { data } = await axios.post('/api/rating', { productId: ratingModal.productId, rating, review }, {
+            const { data } = await axios.post('/api/rating', { productId: ratingModal.productId, orderId: ratingModal.orderId, rating, review }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
+            dispatch(addRating(data.rating))
             toast.success(data.message)
         }catch (error) {
+
 
         }
 
