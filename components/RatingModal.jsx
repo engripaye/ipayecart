@@ -34,11 +34,9 @@ const RatingModal = ({ ratingModal, setRatingModal }) => {
             dispatch(addRating(data.rating))
             toast.success(data.message)
         }catch (error) {
-
-
+            toast.error(error?.response?.data?.error || error.message)
         }
 
-        setRatingModal(null);
     }
 
     return (
