@@ -10,6 +10,8 @@ export async function POST(request) {
                 { status: 401 });
         }
 
+        const { email, amount, orderId } = await request.json()
+
 
 
     }catch (error){
