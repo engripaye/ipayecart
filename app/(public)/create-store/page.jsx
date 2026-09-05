@@ -11,7 +11,7 @@ import axios from "axios";
 export default function CreateStore() {
 
     const {user} = useUser()
-    const {router} = useRouter()
+    const router = useRouter()
     const {getToken} = useAuth()
     const [alreadySubmitted, setAlreadySubmitted] = useState(false)
     const [status, setStatus] = useState("")
@@ -43,7 +43,7 @@ export default function CreateStore() {
                 switch (data.status){
                     case "approved":
                         setMessage("Your store has been approved, you can now add products to your store from dashboard")
-                        setTimeout(() => router.push("/store"), 500)
+                        setTimeout(() => router.push("/store"), 5000)
                         break;
                     case "rejected":
                         setMessage("Your store has been rejected, contact the admin for more details")
