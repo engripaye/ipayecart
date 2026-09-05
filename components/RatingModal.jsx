@@ -12,7 +12,7 @@ import {addRating} from "@/lib/features/rating/ratingSlice";
 const RatingModal = ({ ratingModal, setRatingModal }) => {
 
     const { getToken } = useAuth()
-    const { dispatch } = useDispatch
+    const { dispatch } = useDispatch()
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState('');
 
