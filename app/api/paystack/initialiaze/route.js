@@ -24,6 +24,10 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Order not found' },
                 { status: 404 });
         }
+
+        // Paystack expects the amount in kobo (for NGN), so multiply by 100
+        const amountInKobo = Math.round(Number(amount) * 100);
+        const reference = `IPAYE-${order.id}-${Date.now()}`;
     }catch (error){
 
     }
