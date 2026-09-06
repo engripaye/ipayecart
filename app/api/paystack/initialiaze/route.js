@@ -45,6 +45,16 @@ export async function POST(request) {
             })
         });
 
+        const data = await response.json();
+        if(!response.ok || !data.status) {
+            console.error("Paystack initialization error:", data);
+
+            return NextResponse.json({
+                authorization_url: data.data.authorization_url,
+                access_code: data.data.access_code,
+                reference: data.data.reference
+            });
+        }
     }catch (error){
 
     }
