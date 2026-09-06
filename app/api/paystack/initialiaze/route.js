@@ -11,9 +11,19 @@ export async function POST(request) {
         }
 
         const { email, amount, orderId } = await request.json()
+        if(!email || !amount || !orderId){
+                return NextResponse.json({ error: 'missing required fields' },
+                    { status: 400 });
+            }
 
-
-
+        // Make sure the order belongs to the logged-in user
+        const order = await prisma.order.findUnique({
+            where: { id: orderId, userId }
+        });
+        if(!order){
+            return NextResponse.json({ error: 'Order not found' },
+                { status: 404 });
+        }
     }catch (error){
 
     }
