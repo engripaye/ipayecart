@@ -28,6 +28,23 @@ export async function POST(request) {
         // Paystack expects the amount in kobo (for NGN), so multiply by 100
         const amountInKobo = Math.round(Number(amount) * 100);
         const reference = `IPAYE-${order.id}-${Date.now()}`;
+
+        const response = await fetch('https://api.paystack.co/transaction/initialize', {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                email,
+                amount: amountInKobo,
+                currency: "NGN",
+                reference,
+                callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/paystack/callback`
+            })
+        });
+
     }catch (error){
 
     }
