@@ -22,6 +22,14 @@ export async function GET(request){
                 }
             }
         );
+
+        const data = await response.json();
+
+        if(!response.ok || !data.status){
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
     }catch (error){
 
     }
