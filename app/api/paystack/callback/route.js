@@ -90,6 +90,10 @@ export async function GET(request){
             new URL(`/orders?payment=success&reference=${reference}`, request.url)
         );
     }catch (error){
+        console.error("Paystack callback error:", error);
 
+        return NextResponse.redirect(
+            new URL("/checkout?payment=failed", request.url)
+        );
     }
 }
