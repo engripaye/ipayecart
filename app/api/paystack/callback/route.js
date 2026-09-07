@@ -30,6 +30,16 @@ export async function GET(request){
                 new URL("/checkout?payment=failed", request.url)
             );
         }
+
+        const transaction = data.data;
+        // if payment was not successful
+        if(transaction.status !== "success"){
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
+
+
     }catch (error){
 
     }
