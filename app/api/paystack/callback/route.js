@@ -76,7 +76,16 @@ export async function GET(request){
                     new URL("/checkout?payment=failed", request.url)
                 );
             }
+
+            await prisma.order.update({
+                where: {
+                    id: order.id
+                }, data: {
+                    isPaid: true
+                }
+            })
         }
+
 
 
 
