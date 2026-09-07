@@ -86,10 +86,9 @@ export async function GET(request){
             })
         }
 
-
-
-
-
+        return NextResponse.redirect(
+            new URL(`/orders?payment=success&reference=${reference}`, request.url)
+        );
     }catch (error){
 
     }
