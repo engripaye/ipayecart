@@ -43,13 +43,19 @@ export async function GET(request){
         // IPAYE-orderId-timestamp
         const part = reference.split("-");
 
-        const prderId = part[1];
+        const orderId = part[1];
 
         if(!orderId){
             return NextResponse.redirect(
                 new URL("/checkout?payment=failed", request.url)
             );
         }
+
+        const order = await prisma.order.findUnique({
+            where : {
+                id: orderId
+            }
+        })
 
 
 
