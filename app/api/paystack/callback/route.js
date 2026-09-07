@@ -63,6 +63,20 @@ export async function GET(request){
             );
         }
 
+        // prevent processing the same payment twice
+        if(!order.isPaid){
+
+            // verify that amount
+            const expectedAmount = Math.round(Number(order.total) * 100);
+
+            if (Number(transaction.amount) !== expectedAmount){
+                console.error("Payment amount mismatch");
+
+                return NextResponse.redirect(
+                    new URL("/checkout?payment=failed", request.url)
+                );
+            }
+        }
 
 
 
