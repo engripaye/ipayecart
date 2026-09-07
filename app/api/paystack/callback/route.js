@@ -57,7 +57,13 @@ export async function GET(request){
             }
         });
 
-        if
+        if(!order){
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
+
+
 
 
 
