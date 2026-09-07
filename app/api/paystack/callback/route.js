@@ -39,6 +39,19 @@ export async function GET(request){
             );
         }
 
+        // Extract order ID from our reference
+        // IPAYE-orderId-timestamp
+        const part = reference.split("-");
+
+        const prderId = part[1];
+
+        if(!orderId){
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
+
+
 
     }catch (error){
 
