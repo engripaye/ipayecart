@@ -80,7 +80,7 @@ export default function CheckoutPage() {
         );
     }, [cart]);
 
-    const shipping = subtotal > 0 ? 5 : 0;
+    const shipping = subtotal > 0 && subtotal < 50000 ? 5000 : 0;
 
     const discount = coupon
         ? (subtotal * coupon.discount) / 100

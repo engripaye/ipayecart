@@ -150,6 +150,10 @@ export async function POST(request) {
         const orderIds = [];
         let fullAmount = 0;
         let isShippingFeeAdded = false;
+        const productSubtotal = Array.from(ordersByStore.values())
+            .flat()
+            .reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const shouldChargeShipping = !isPlusMember && productSubtotal < 50000;
 
         for (const [storeId, storeItems] of ordersByStore.entries()) {
 
@@ -164,10 +168,10 @@ export async function POST(request) {
                 total -= (total * coupon.discount) / 100;
             }
 
-            // Free shipping for Plus members
-            // Otherwise add $5 shipping once
-            if (!isPlusMember && !isShippingFeeAdded) {
-                total += 5;
+            // Free shipping for Plus members and orders of ₦50,000 or more.
+            // Otherwise add ₦5,000 shipping once.
+            if (shouldChargeShipping && !isShippingFeeAdded) {
+                total += 5000;
                 isShippingFeeAdded = true;
             }
 

@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 const ProductDetails = ({ product }) => {
 
     const productId = product.id;
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦';
 
     const cart = useSelector(state => state.cart.cartItems);
     const dispatch = useDispatch();
@@ -31,13 +31,13 @@ const ProductDetails = ({ product }) => {
             <div className="flex max-sm:flex-col-reverse gap-3">
                 <div className="flex sm:flex-col gap-3">
                     {product.images.map((image, index) => (
-                        <div key={index} onClick={() => setMainImage(product.images[index])} className="bg-slate-100 flex items-center justify-center size-26 rounded-lg group cursor-pointer">
-                            <Image src={image} className="group-hover:scale-103 group-active:scale-95 transition" alt="" width={45} height={45} />
-                        </div>
+                        <button type="button" key={index} onClick={() => setMainImage(image)} aria-label={`View product image ${index + 1}`} className={`relative size-20 shrink-0 overflow-hidden rounded-lg border bg-white transition sm:size-26 ${mainImage === image ? 'border-green-600 ring-2 ring-green-100' : 'border-slate-200 hover:border-green-400'}`}>
+                            <Image src={image} className="object-contain p-2" alt={`${product.name} thumbnail ${index + 1}`} fill sizes="104px" />
+                        </button>
                     ))}
                 </div>
-                <div className="flex justify-center items-center h-100 sm:size-113 bg-slate-100 rounded-lg ">
-                    <Image src={mainImage} alt="" width={250} height={250} />
+                <div className="relative flex h-80 w-full max-w-[28rem] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:size-113">
+                    <Image src={mainImage} alt={product.name} fill priority sizes="(max-width: 640px) 100vw, 452px" className="object-contain p-6 sm:p-10" />
                 </div>
             </div>
             <div className="flex-1">
@@ -49,8 +49,8 @@ const ProductDetails = ({ product }) => {
                     <p className="text-sm ml-3 text-slate-500">{product.rating.length} Reviews</p>
                 </div>
                 <div className="flex items-start my-6 gap-3 text-2xl font-semibold text-slate-800">
-                    <p> {currency}{product.price} </p>
-                    <p className="text-xl text-slate-500 line-through">{currency}{product.mrp}</p>
+                    <p> {currency}{Number(product.price).toLocaleString('en-NG')} </p>
+                    <p className="text-xl text-slate-500 line-through">{currency}{Number(product.mrp).toLocaleString('en-NG')}</p>
                 </div>
                 <div className="flex items-center gap-2 text-slate-500">
                     <TagIcon size={14} />
@@ -71,7 +71,7 @@ const ProductDetails = ({ product }) => {
                 </div>
                 <hr className="border-gray-300 my-5" />
                 <div className="flex flex-col gap-4 text-slate-500">
-                    <p className="flex gap-3"> <EarthIcon className="text-slate-400" /> Free shipping worldwide </p>
+                    <p className="flex gap-3"> <EarthIcon className="text-slate-400" /> Nationwide delivery in Nigeria </p>
                     <p className="flex gap-3"> <CreditCardIcon className="text-slate-400" /> 100% Secured Payment </p>
                     <p className="flex gap-3"> <UserIcon className="text-slate-400" /> Trusted by top brands </p>
                 </div>

@@ -241,7 +241,7 @@ Each vendor receives a dedicated dashboard.
 ├─────────────────────────────────────────────┤
 │                                             │
 │  💰 Revenue          📦 Orders              │
-│  $24,850             184                    │
+│  ₦24,850             184                    │
 │                                             │
 │  🛍️ Products         📈 Sales               │
 │  126                 +18.5%                 │

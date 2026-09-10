@@ -4,6 +4,14 @@ import prisma from "@/lib/prisma";
 
 export async function POST(request) {
     try {
+        if (!process.env.PAYSTACK_SECRET_KEY) {
+            console.error("PAYSTACK_SECRET_KEY is not configured");
+            return NextResponse.json(
+                { error: "Payment service is not configured" },
+                { status: 503 }
+            );
+        }
+
         const { userId } = getAuth(request);
 
         if (!userId) {
@@ -45,6 +53,13 @@ export async function POST(request) {
             (sum, order) => sum + order.total,
             0
         );
+
+        if (!Number.isFinite(total) || total <= 0) {
+            return NextResponse.json(
+                { error: "Invalid payment amount" },
+                { status: 400 }
+            );
+        }
 
         const amountInKobo = Math.round(total * 100);
 

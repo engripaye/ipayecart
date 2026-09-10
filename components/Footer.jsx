@@ -32,9 +32,9 @@ const Footer = () => {
         {
             title: "CONTACT",
             links: [
-                { text: "+1-212-456-7890", path: '/', icon: MailIcon },
-                { text: "contact@example.com", path: '/', icon: PhoneIcon },
-                { text: "794 Francisco, 94102", path: '/', icon: MapPinIcon }
+                { text: "+814 505 5049", path: 'tel:+8145055049', icon: PhoneIcon },
+                { text: "b.tunde.ipaye@gmail.com", path: 'mailto:b.tunde.ipaye@gmail.com', icon: MailIcon },
+                { text: "Jerusalem, Command Road, Ipaja, Lagos", path: '/', icon: MapPinIcon }
             ]
         }
     ];
@@ -80,7 +80,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <p className="py-4 text-sm text-slate-500">
-                    Copyright 2026 © gocart All Right Reserved.
+                    Copyright 2026 © IpayeCart. All rights reserved.
                 </p>
             </div>
         </footer>

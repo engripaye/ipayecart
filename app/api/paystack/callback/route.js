@@ -6,6 +6,19 @@ export async function GET(request) {
     try {
         const { userId } = getAuth(request);
 
+        if (!userId) {
+            return NextResponse.redirect(
+                new URL("/sign-in?redirect_url=/checkout", request.url)
+            );
+        }
+
+        if (!process.env.PAYSTACK_SECRET_KEY) {
+            console.error("PAYSTACK_SECRET_KEY is not configured");
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
+
         const { searchParams } = new URL(request.url);
         const reference = searchParams.get("reference");
 
@@ -45,6 +58,12 @@ export async function GET(request) {
             );
         }
 
+        if (transaction.currency !== "NGN") {
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
+
         const metadata = transaction.metadata || {};
 
         const orderIds = metadata.orderIds;
@@ -71,7 +90,7 @@ export async function GET(request) {
         }
 
         // Make sure the authenticated user owns the orders
-        if (userId && orders.some(order => order.userId !== userId)) {
+        if (orders.some(order => order.userId !== userId)) {
             return NextResponse.redirect(
                 new URL("/checkout?payment=failed", request.url)
             );
@@ -114,16 +133,14 @@ export async function GET(request) {
         });
 
         // Clear the customer's cart only after successful payment
-        if (userId) {
-            await prisma.user.update({
-                where: {
-                    id: userId
-                },
-                data: {
-                    cart: {}
-                }
-            });
-        }
+        await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                cart: {}
+            }
+        });
 
         return NextResponse.redirect(
             new URL(

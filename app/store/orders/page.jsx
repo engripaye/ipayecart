@@ -12,6 +12,7 @@ export default function StoreOrders() {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const {getToken} = useAuth()
+    const formatNaira = (amount) => `₦${Number(amount).toLocaleString('en-NG')}`
 
     const fetchOrders = async () => {
         try {
@@ -90,7 +91,7 @@ export default function StoreOrders() {
                                         {index + 1}
                                     </td>
                                     <td className="px-4 py-3">{order.user?.name}</td>
-                                    <td className="px-4 py-3 font-medium text-slate-800">${order.total}</td>
+                                    <td className="px-4 py-3 font-medium text-slate-800">{formatNaira(order.total)}</td>
                                     <td className="px-4 py-3">{order.paymentMethod}</td>
                                     <td className="px-4 py-3">
                                         {order.isCouponUsed ? (
@@ -154,7 +155,7 @@ export default function StoreOrders() {
                                         <div className="flex-1">
                                             <p className="text-slate-800">{item.product?.name}</p>
                                             <p>Qty: {item.quantity}</p>
-                                            <p>Price: ${item.price}</p>
+                                            <p>Price: {formatNaira(item.price)}</p>
                                         </div>
                                     </div>
                                 ))}

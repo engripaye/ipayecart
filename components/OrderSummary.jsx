@@ -13,7 +13,7 @@ const OrderSummary = ({ totalPrice, items }) => {
     const { user } = useUser()
     const { getToken } = useAuth()
     const dispatch = useDispatch()
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦';
 
     const router = useRouter();
 
@@ -159,7 +159,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                     </div>
                     <div className='flex flex-col gap-1 font-medium text-right'>
                         <p>{currency}{totalPrice.toLocaleString()}</p>
-                        <p><Show when={{ plan: "plus" }} fallback={`${currency}5`}>Free</Show></p>
+                        <p><Show when={{ plan: "plus" }} fallback={totalPrice >= 50000 ? "Free" : `${currency}5,000`}>Free</Show></p>
                         {coupon && <p>{`-${currency}${(coupon.discount / 100 * totalPrice).toFixed(2)}`}</p>}
                     </div>
                 </div>
@@ -182,7 +182,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                 <p>Total:</p>
 
                 <p className='font-medium text-right'>
-                    <Show when={{ plan: "plus"}} fallback={`${currency}${coupon ? (totalPrice + 5 - (coupon.discount / 100 * totalPrice)).toFixed(2) : (totalPrice + 5).toLocaleString()}`}>
+                    <Show when={{ plan: "plus"}} fallback={`${currency}${coupon ? (totalPrice + (totalPrice >= 50000 ? 0 : 5000) - (coupon.discount / 100 * totalPrice)).toFixed(2) : (totalPrice + (totalPrice >= 50000 ? 0 : 5000)).toLocaleString()}`}>
                         {currency}{coupon ? (totalPrice - (coupon.discount / 100 * totalPrice)).toFixed(2) : totalPrice .toLocaleString()}
                     </Show>
                     </p>
