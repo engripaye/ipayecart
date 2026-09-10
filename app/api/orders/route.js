@@ -208,17 +208,19 @@ export async function POST(request) {
         }
 
         // ----------------------------------------
-        // CLEAR CART
+        // CLEAR CART ONLY FOR COD
         // ----------------------------------------
 
-        await prisma.user.update({
-            where: {
-                id: userId
-            },
-            data: {
-                cart: {}
-            }
-        });
+        if (paymentMethod === "COD") {
+            await prisma.user.update({
+                where: {
+                    id: userId
+                },
+                data: {
+                    cart: {}
+                }
+            });
+        }
 
         return NextResponse.json({
             message: "Order placed successfully",
