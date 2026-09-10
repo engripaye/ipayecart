@@ -267,7 +267,7 @@ export async function GET(request) {
                         paymentMethod: "COD"
                     },
                     {
-                        paymentMethod: "STRIPE",
+                        paymentMethod: "PAYSTACK",
                         isPaid: true
                     }
                 ]
