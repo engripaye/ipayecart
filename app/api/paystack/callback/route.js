@@ -1,8 +1,11 @@
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(request){
-    try{
+export async function GET(request) {
+    try {
+        const { userId } = getAuth(request);
+
         const { searchParams } = new URL(request.url);
         const reference = searchParams.get("reference");
 
@@ -12,9 +15,9 @@ export async function GET(request){
             );
         }
 
-        // verify transaction with paystack
+        // Verify payment directly with Paystack
         const response = await fetch(
-            `https://api.paystack.co/transaction/verify/${reference}`,
+            `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
             {
                 method: "GET",
                 headers: {
@@ -23,74 +26,114 @@ export async function GET(request){
             }
         );
 
-        const data = await response.json();
+        const result = await response.json();
 
-        if(!response.ok || !data.status){
+        if (!response.ok || !result.status) {
+            console.error("PAYSTACK VERIFY ERROR:", result);
+
             return NextResponse.redirect(
                 new URL("/checkout?payment=failed", request.url)
             );
         }
 
-        const transaction = data.data;
-        // if payment was not successful
-        if(transaction.status !== "success"){
+        const transaction = result.data;
+
+        // Paystack transaction itself must be successful
+        if (transaction.status !== "success") {
             return NextResponse.redirect(
                 new URL("/checkout?payment=failed", request.url)
             );
         }
 
-        // Extract order ID from our reference
-        // IPAYE-orderId-timestamp
-        const part = reference.split("-");
+        const metadata = transaction.metadata || {};
 
-        const orderId = part[1];
+        const orderIds = metadata.orderIds;
 
-        if(!orderId){
+        if (!Array.isArray(orderIds) || orderIds.length === 0) {
             return NextResponse.redirect(
                 new URL("/checkout?payment=failed", request.url)
             );
         }
 
-        const order = await prisma.order.findUnique({
-            where : {
-                id: orderId
+        // Get the orders
+        const orders = await prisma.order.findMany({
+            where: {
+                id: {
+                    in: orderIds
+                }
             }
         });
 
-        if(!order){
+        if (orders.length !== orderIds.length) {
             return NextResponse.redirect(
                 new URL("/checkout?payment=failed", request.url)
             );
         }
 
-        // prevent processing the same payment twice
-        if(!order.isPaid){
+        // Make sure the authenticated user owns the orders
+        if (userId && orders.some(order => order.userId !== userId)) {
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
 
-            // verify that amount
-            const expectedAmount = Math.round(Number(order.total) * 100);
+        // Calculate the amount our database expected
+        const expectedAmount = Math.round(
+            orders.reduce(
+                (sum, order) => sum + order.total,
+                0
+            ) * 100
+        );
 
-            if (Number(transaction.amount) !== expectedAmount){
-                console.error("Payment amount mismatch");
-
-                return NextResponse.redirect(
-                    new URL("/checkout?payment=failed", request.url)
-                );
-            }
-
-            await prisma.order.update({
-                where: {
-                    id: order.id
-                }, data: {
-                    isPaid: true
+        // Verify amount
+        if (transaction.amount !== expectedAmount) {
+            console.error(
+                "PAYMENT AMOUNT MISMATCH",
+                {
+                    paystack: transaction.amount,
+                    expected: expectedAmount
                 }
-            })
+            );
+
+            return NextResponse.redirect(
+                new URL("/checkout?payment=failed", request.url)
+            );
+        }
+
+        // Mark all orders as paid
+        await prisma.order.updateMany({
+            where: {
+                id: {
+                    in: orderIds
+                },
+                isPaid: false
+            },
+            data: {
+                isPaid: true
+            }
+        });
+
+        // Clear the customer's cart only after successful payment
+        if (userId) {
+            await prisma.user.update({
+                where: {
+                    id: userId
+                },
+                data: {
+                    cart: {}
+                }
+            });
         }
 
         return NextResponse.redirect(
-            new URL(`/orders?payment=success&reference=${reference}`, request.url)
+            new URL(
+                `/orders?payment=success&reference=${encodeURIComponent(reference)}`,
+                request.url
+            )
         );
-    }catch (error){
-        console.error("Paystack callback error:", error);
+
+    } catch (error) {
+        console.error("PAYSTACK CALLBACK ERROR:", error);
 
         return NextResponse.redirect(
             new URL("/checkout?payment=failed", request.url)
